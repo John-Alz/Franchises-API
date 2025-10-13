@@ -18,4 +18,10 @@ public class ProductPersistenceAdapter implements ProductPersistencePort {
         return productRepository.save(productEntityMapper.toEntity(product))
                 .map(productEntityMapper::toModel);
     }
+
+    @Override
+    public Mono<Integer> deleteProduct(Long branchId, Long productId) {
+        return productRepository.deleteByIdAndBranchId(branchId, branchId);
+    }
+
 }
