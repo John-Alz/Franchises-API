@@ -75,10 +75,8 @@ public class FranchiseHandlerImpl {
     }
 
 
-
     private String getMessageId(ServerRequest serverRequest) {
         return serverRequest.headers().firstHeader(X_MESSAGE_ID);
     }
-
 
 }
