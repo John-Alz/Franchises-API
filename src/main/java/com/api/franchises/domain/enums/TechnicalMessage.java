@@ -19,7 +19,9 @@ public enum TechnicalMessage {
     FRANCHISE_ALREADY_EXISTS("400","La franquicia ya está registrada." ,"" ),
     FRANCHISE_NOT_FOUND("400","La franquicia no existe." ,"" ),
     BRANCH_CREATED("201", "Branch created successfully", ""),
-    BRANCH_NOT_FOUND("400","La sucursal no existe." ,"" );
+    BRANCH_NOT_FOUND("400","La sucursal no existe." ,"" ),
+    PRODUCT_CREATED("201", "Product created successfully", "");
+
 
 
     private final String code;
