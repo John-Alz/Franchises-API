@@ -1,6 +1,7 @@
 package com.api.franchises.domain.usecase;
 
 import com.api.franchises.domain.api.ProductServicePort;
+import com.api.franchises.domain.constants.Constants;
 import com.api.franchises.domain.enums.TechnicalMessage;
 import com.api.franchises.domain.exceptions.BusinessException;
 import com.api.franchises.domain.model.Branch;
@@ -45,6 +46,9 @@ public class ProductUseCase implements ProductServicePort  {
 
     @Override
     public Mono<Void> updateStockProduct(Long branchId, Long productId, int newStock) {
+        if (newStock < Constants.MIN_STOCK) {
+            return Mono.error(new BusinessException(TechnicalMessage.NEGATIVE_STOCK));
+        }
         return branchPersistencePort.existById(branchId)
                 .flatMap(exist -> exist
                 ? productPersistencePort.updateStockProduct(branchId, productId, newStock)
@@ -53,6 +57,5 @@ public class ProductUseCase implements ProductServicePort  {
                         ? Mono.<Void>empty()
                         : Mono.error(new BusinessException(TechnicalMessage.PRODUCT_NOT_IN_BRANCH_OR_NOT_FOUND)));
     }
-
 
 }
