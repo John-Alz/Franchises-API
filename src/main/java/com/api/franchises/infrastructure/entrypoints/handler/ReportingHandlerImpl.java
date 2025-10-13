@@ -4,7 +4,6 @@ import com.api.franchises.domain.api.ReportingServicePort;
 import com.api.franchises.domain.enums.TechnicalMessage;
 import com.api.franchises.domain.exceptions.BusinessException;
 import com.api.franchises.domain.exceptions.TechnicalException;
-import com.api.franchises.domain.model.TopProductPerBranch;
 import com.api.franchises.infrastructure.entrypoints.mapper.ReportingMapper;
 import com.api.franchises.infrastructure.entrypoints.util.ErrorDTO;
 import lombok.RequiredArgsConstructor;

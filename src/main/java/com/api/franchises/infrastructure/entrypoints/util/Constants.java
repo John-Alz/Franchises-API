@@ -6,6 +6,9 @@ import lombok.experimental.UtilityClass;
 public class Constants {
     public static final String X_MESSAGE_ID = "x-message-id";
     public static final String FRANCHISE_ERROR = "Error on Franchise - [ERROR]";
+    public static final String BRANCH_ERROR = "Error on Branch - [ERROR]";
+    public static final String PRODUCT_ERROR = "Error on Product - [ERROR]";
+
 
     public static String BASE = "/api/v1";
 }
