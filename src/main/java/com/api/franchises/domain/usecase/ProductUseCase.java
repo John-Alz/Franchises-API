@@ -1,0 +1,34 @@
+package com.api.franchises.domain.usecase;
+
+import com.api.franchises.domain.api.ProductServicePort;
+import com.api.franchises.domain.enums.TechnicalMessage;
+import com.api.franchises.domain.exceptions.BusinessException;
+import com.api.franchises.domain.model.Branch;
+import com.api.franchises.domain.model.Product;
+import com.api.franchises.domain.spi.BranchPersistencePort;
+import com.api.franchises.domain.spi.ProductPersistencePort;
+import reactor.core.publisher.Mono;
+
+public class ProductUseCase implements ProductServicePort  {
+
+    private final ProductPersistencePort productPersistencePort;
+    private final BranchPersistencePort branchPersistencePort;
+
+    public ProductUseCase(ProductPersistencePort productPersistencePort, BranchPersistencePort branchPersistencePort) {
+        this.productPersistencePort = productPersistencePort;
+        this.branchPersistencePort = branchPersistencePort;
+    }
+
+    @Override
+    public Mono<Product> saveProduct(Long branchId, Product product, String messageId) {
+        return branchPersistencePort.existById(branchId)
+                .filter(exist -> exist)
+                .switchIfEmpty(Mono.error(new BusinessException(TechnicalMessage.BRANCH_NOT_FOUND)))
+                .flatMap(ignore -> productPersistencePort.saveProduct(new Product(
+                        null,
+                        product.name(),
+                        product.stock(),
+                        branchId
+                )));
+    }
+}

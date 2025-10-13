@@ -19,4 +19,9 @@ public class BranchPersistenceAdapter implements BranchPersistencePort {
         return branchRepository.save(branchEntityMapper.toEntity(branch))
                 .map(branchEntityMapper::toModel);
     }
+
+    @Override
+    public Mono<Boolean> existById(Long id) {
+        return branchRepository.existsById(id);
+    }
 }

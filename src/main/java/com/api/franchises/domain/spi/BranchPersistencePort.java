@@ -6,5 +6,7 @@ import reactor.core.publisher.Mono;
 public interface BranchPersistencePort {
 
     Mono<Branch> saveBranch(Long franchiseId, Branch branch);
+    Mono<Boolean> existById(Long id);
+
 
 }
