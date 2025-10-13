@@ -17,4 +17,8 @@ public interface ProductRepository extends ReactiveCrudRepository<ProductEntity,
     @Modifying
     @Query("UPDATE products SET stock = :newStock WHERE id = :productId AND branch_id = :branchId")
     Mono<Integer> updateStockInBranch(Long branchId, Long productId, int newStock);
+
+    @Modifying
+    @Query("UPDATE products SET name = :newName WHERE id = :productId AND branch_id = :branchId")
+    Mono<Integer> updateNameInBranch(Long branchId, Long productId, String newName);
 }
