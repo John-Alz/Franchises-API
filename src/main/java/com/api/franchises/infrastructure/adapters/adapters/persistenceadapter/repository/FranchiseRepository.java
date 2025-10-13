@@ -8,4 +8,6 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface FranchiseRepository extends ReactiveMongoRepository<FranchiseEntity, String> {
 
+    Mono<Boolean> existsByName(String name);
+
 }
