@@ -33,9 +33,11 @@ public class ReportingHandlerImpl {
                 ? getMessageId(request)
                 : UUID.randomUUID().toString();
         Long franchiseId = Long.valueOf(request.pathVariable("franchiseId"));
-        return ServerResponse.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(reportingServicePort.topProductPerBranch(franchiseId), TopProductPerBranch.class)
+        return reportingServicePort.topProductPerBranch(franchiseId)
+                .collectList()
+                .flatMap(list -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(list))
                 .onErrorResume(BusinessException.class, ex -> buildErrorResponse(
                         HttpStatus.BAD_REQUEST,
                         messageId,
