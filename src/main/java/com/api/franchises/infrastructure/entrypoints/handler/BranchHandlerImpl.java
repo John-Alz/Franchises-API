@@ -1,12 +1,11 @@
 package com.api.franchises.infrastructure.entrypoints.handler;
 
-import com.api.franchises.domain.api.FranchiseServicePort;
+import com.api.franchises.domain.api.BranchServicePort;
 import com.api.franchises.domain.enums.TechnicalMessage;
 import com.api.franchises.domain.exceptions.BusinessException;
 import com.api.franchises.domain.exceptions.TechnicalException;
-import com.api.franchises.infrastructure.entrypoints.dto.FranchiseDTO;
-import com.api.franchises.infrastructure.entrypoints.mapper.FranchiseMapper;
-import com.api.franchises.infrastructure.entrypoints.util.APIResponse;
+import com.api.franchises.infrastructure.entrypoints.dto.BranchDTO;
+import com.api.franchises.infrastructure.entrypoints.mapper.BranchMapper;
 import com.api.franchises.infrastructure.entrypoints.util.ErrorDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,40 +16,34 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 import reactor.util.context.Context;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
 import static com.api.franchises.infrastructure.entrypoints.util.Constants.FRANCHISE_ERROR;
 import static com.api.franchises.infrastructure.entrypoints.util.Constants.X_MESSAGE_ID;
-import static com.api.franchises.infrastructure.entrypoints.util.ResponseHandler.buildSuccessResponse;
 import static com.api.franchises.infrastructure.entrypoints.util.ResponseHandler.buildErrorResponse;
-
-
-
+import static com.api.franchises.infrastructure.entrypoints.util.ResponseHandler.buildSuccessResponse;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class FranchiseHandlerImpl {
+public class BranchHandlerImpl {
 
-    private final FranchiseServicePort franchiseServicePort;
-    private final FranchiseMapper franchiseMapper;
+    private final BranchServicePort branchServicePort;
+    private final BranchMapper branchMapper;
 
-    public Mono<ServerResponse> createFranchise(ServerRequest request) {
+    public Mono<ServerResponse> createBranch(ServerRequest request) {
         final String messageId = getMessageId(request) != null
                 ? getMessageId(request)
                 : UUID.randomUUID().toString();
-        return request.bodyToMono(FranchiseDTO.class)
-                .flatMap(franchise -> franchiseServicePort.saveFranchise(franchiseMapper.franchiseDTOToFranchise(franchise), messageId)
-                        .doOnSuccess(savedFranchise -> log.info("Franchise created successfully with messageId: {}", messageId))
+        Long franchiseId = Long.valueOf(request.pathVariable("franchiseId"));
+        return request.bodyToMono(BranchDTO.class)
+                .flatMap(branchDTO -> branchServicePort.saveBranch(franchiseId, branchMapper.branchDTOToBranch(branchDTO), messageId)
+                        .doOnSuccess(savedBranch -> log.info("Branch created successfully with messageId: {}", messageId))
                 )
-                .flatMap(franchise -> buildSuccessResponse(
-                        HttpStatus.CREATED,
-                        messageId,
-                        TechnicalMessage.FRANCHISE_CREATED,
-                        franchise
-                ))
+                .flatMap(savedBranch -> ServerResponse
+                        .status(HttpStatus.CREATED)
+                        .bodyValue(TechnicalMessage.BRANCH_CREATED.getMessage()))
                 .contextWrite(Context.of(X_MESSAGE_ID, messageId))
                 .doOnError(ex -> log.error(FRANCHISE_ERROR, ex))
                 .onErrorResume(BusinessException.class, ex -> buildErrorResponse(
@@ -58,20 +51,20 @@ public class FranchiseHandlerImpl {
                         messageId,
                         TechnicalMessage.INVALID_PARAMETERS,
                         List.of(ErrorDTO.builder()
-                                        .code(ex.getTechnicalMessage().getCode())
-                                        .message(ex.getTechnicalMessage().getMessage())
-                                        .param(ex.getTechnicalMessage().getParam())
+                                .code(ex.getTechnicalMessage().getCode())
+                                .message(ex.getTechnicalMessage().getMessage())
+                                .param(ex.getTechnicalMessage().getParam())
                                 .build())
                 ))
                 .onErrorResume(TechnicalException.class, ex -> buildErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                messageId,
-                TechnicalMessage.INTERNAL_ERROR,
-                List.of(ErrorDTO.builder()
-                        .code(ex.getTechnicalMessage().getCode())
-                        .message(ex.getTechnicalMessage().getMessage())
-                        .param(ex.getTechnicalMessage().getParam())
-                        .build())));
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        messageId,
+                        TechnicalMessage.INTERNAL_ERROR,
+                        List.of(ErrorDTO.builder()
+                                .code(ex.getTechnicalMessage().getCode())
+                                .message(ex.getTechnicalMessage().getMessage())
+                                .param(ex.getTechnicalMessage().getParam())
+                                .build())));
     }
 
 

@@ -7,6 +7,7 @@ public interface FranchisePersistencePort {
 
     Mono<Franchise> saveFranchise(Franchise franchise);
     Mono<Boolean> existByName(String name);
+    Mono<Boolean> existById(Long id);
 
 
 }

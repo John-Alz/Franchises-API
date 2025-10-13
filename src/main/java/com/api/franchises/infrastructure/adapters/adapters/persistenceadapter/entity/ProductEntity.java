@@ -2,11 +2,11 @@ package com.api.franchises.infrastructure.adapters.adapters.persistenceadapter.e
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-import java.util.List;
 
-
+@Table(name = "products")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -14,8 +14,11 @@ import java.util.List;
 public class ProductEntity {
 
     @Id
-    private String id;
+    private Long id;
     private String name;
     private int stock;
+    @Column("branch_id")
+    private Long branchId;
+
 
 }
