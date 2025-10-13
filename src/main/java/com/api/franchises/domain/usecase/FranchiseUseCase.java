@@ -22,4 +22,12 @@ public class FranchiseUseCase implements FranchiseServicePort {
                 .switchIfEmpty(Mono.error(new BusinessException(TechnicalMessage.FRANCHISE_ALREADY_EXISTS)))
                 .flatMap(ignore -> franchisePersistencePort.saveFranchise(franchise));
     }
+
+    @Override
+    public Mono<Void> updateNameFranchise(Long franchiseId, String newName) {
+        return franchisePersistencePort.updateNameFranchise(franchiseId, newName)
+                .flatMap(rows -> rows > 0
+                ? Mono.<Void>empty()
+                : Mono.error(new BusinessException(TechnicalMessage.FRANCHISE_NOT_FOUND)));
+    }
 }

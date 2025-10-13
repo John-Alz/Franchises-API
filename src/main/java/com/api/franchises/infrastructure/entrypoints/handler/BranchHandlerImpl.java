@@ -19,10 +19,8 @@ import reactor.util.context.Context;
 import java.util.List;
 import java.util.UUID;
 
-import static com.api.franchises.infrastructure.entrypoints.util.Constants.FRANCHISE_ERROR;
-import static com.api.franchises.infrastructure.entrypoints.util.Constants.X_MESSAGE_ID;
+import static com.api.franchises.infrastructure.entrypoints.util.Constants.*;
 import static com.api.franchises.infrastructure.entrypoints.util.ResponseHandler.buildErrorResponse;
-import static com.api.franchises.infrastructure.entrypoints.util.ResponseHandler.buildSuccessResponse;
 
 @Slf4j
 @Component
@@ -45,7 +43,7 @@ public class BranchHandlerImpl {
                         .status(HttpStatus.CREATED)
                         .bodyValue(TechnicalMessage.BRANCH_CREATED.getMessage()))
                 .contextWrite(Context.of(X_MESSAGE_ID, messageId))
-                .doOnError(ex -> log.error(FRANCHISE_ERROR, ex))
+                .doOnError(ex -> log.error(BRANCH_ERROR, ex))
                 .onErrorResume(BusinessException.class, ex -> buildErrorResponse(
                         HttpStatus.BAD_REQUEST,
                         messageId,

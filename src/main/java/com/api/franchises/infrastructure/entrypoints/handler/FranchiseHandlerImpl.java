@@ -5,8 +5,8 @@ import com.api.franchises.domain.enums.TechnicalMessage;
 import com.api.franchises.domain.exceptions.BusinessException;
 import com.api.franchises.domain.exceptions.TechnicalException;
 import com.api.franchises.infrastructure.entrypoints.dto.FranchiseDTO;
+import com.api.franchises.infrastructure.entrypoints.dto.UpdateNameRequest;
 import com.api.franchises.infrastructure.entrypoints.mapper.FranchiseMapper;
-import com.api.franchises.infrastructure.entrypoints.util.APIResponse;
 import com.api.franchises.infrastructure.entrypoints.util.ErrorDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,6 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 import reactor.util.context.Context;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,6 +25,7 @@ import static com.api.franchises.infrastructure.entrypoints.util.Constants.X_MES
 import static com.api.franchises.infrastructure.entrypoints.util.ResponseHandler.buildSuccessResponse;
 import static com.api.franchises.infrastructure.entrypoints.util.ResponseHandler.buildErrorResponse;
 
+import static com.api.franchises.infrastructure.entrypoints.util.MessageId.getMessageId;
 
 
 
@@ -74,9 +74,36 @@ public class FranchiseHandlerImpl {
                         .build())));
     }
 
-
-    private String getMessageId(ServerRequest serverRequest) {
-        return serverRequest.headers().firstHeader(X_MESSAGE_ID);
+    public Mono<ServerResponse> updateNameFranchise(ServerRequest request) {
+        final String messageId = getMessageId(request) != null
+                ? getMessageId(request)
+                : UUID.randomUUID().toString();
+        Long franchiseId = Long.valueOf(request.pathVariable("franchiseId"));
+        return request.bodyToMono(UpdateNameRequest.class)
+                .flatMap(dto -> franchiseServicePort.updateNameFranchise(franchiseId, dto.getNewName()))
+                .then(ServerResponse.noContent().build())
+                .contextWrite(Context.of(X_MESSAGE_ID, messageId))
+                .doOnError(ex -> log.error(FRANCHISE_ERROR, ex))
+                .onErrorResume(BusinessException.class, ex -> buildErrorResponse(
+                        HttpStatus.BAD_REQUEST,
+                        messageId,
+                        TechnicalMessage.INVALID_PARAMETERS,
+                        List.of(ErrorDTO.builder()
+                                .code(ex.getTechnicalMessage().getCode())
+                                .message(ex.getTechnicalMessage().getMessage())
+                                .param(ex.getTechnicalMessage().getParam())
+                                .build())
+                ))
+                .onErrorResume(TechnicalException.class, ex -> buildErrorResponse(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        messageId,
+                        TechnicalMessage.INTERNAL_ERROR,
+                        List.of(ErrorDTO.builder()
+                                .code(ex.getTechnicalMessage().getCode())
+                                .message(ex.getTechnicalMessage().getMessage())
+                                .param(ex.getTechnicalMessage().getParam())
+                                .build())));
     }
+
 
 }

@@ -17,8 +17,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 import reactor.util.context.Context;
 
-import static com.api.franchises.infrastructure.entrypoints.util.Constants.FRANCHISE_ERROR;
-import static com.api.franchises.infrastructure.entrypoints.util.Constants.X_MESSAGE_ID;
+import static com.api.franchises.infrastructure.entrypoints.util.Constants.*;
 import static com.api.franchises.infrastructure.entrypoints.util.MessageId.getMessageId;
 import static com.api.franchises.infrastructure.entrypoints.util.ResponseHandler.buildErrorResponse;
 
@@ -47,7 +46,7 @@ public class ProductHandlerImpl {
                         .status(HttpStatus.CREATED)
                         .bodyValue(TechnicalMessage.PRODUCT_CREATED.getMessage()))
                 .contextWrite(Context.of(X_MESSAGE_ID, messageId))
-                .doOnError(ex -> log.error(FRANCHISE_ERROR, ex))
+                .doOnError(ex -> log.error(PRODUCT_ERROR, ex))
                 .onErrorResume(BusinessException.class, ex -> buildErrorResponse(
                         HttpStatus.BAD_REQUEST,
                         messageId,
@@ -78,7 +77,7 @@ public class ProductHandlerImpl {
         return productServicePort.deleteProduct(branchId, productId, messageId)
                 .then(ServerResponse.noContent().build())
                 .contextWrite(Context.of(X_MESSAGE_ID, messageId))
-                .doOnError(ex -> log.error(FRANCHISE_ERROR, ex))
+                .doOnError(ex -> log.error(PRODUCT_ERROR, ex))
                 .onErrorResume(BusinessException.class, ex -> buildErrorResponse(
                         HttpStatus.BAD_REQUEST,
                         messageId,
@@ -110,7 +109,7 @@ public class ProductHandlerImpl {
                 .flatMap(dto -> productServicePort.updateStockProduct(branchId, productId, dto.getStock()))
                 .then(ServerResponse.noContent().build())
                 .contextWrite(Context.of(X_MESSAGE_ID, messageId))
-                .doOnError(ex -> log.error(FRANCHISE_ERROR, ex))
+                .doOnError(ex -> log.error(PRODUCT_ERROR, ex))
                 .onErrorResume(BusinessException.class, ex -> buildErrorResponse(
                         HttpStatus.BAD_REQUEST,
                         messageId,
