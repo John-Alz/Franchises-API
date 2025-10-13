@@ -5,6 +5,7 @@ import com.api.franchises.domain.enums.TechnicalMessage;
 import com.api.franchises.domain.exceptions.BusinessException;
 import com.api.franchises.domain.exceptions.TechnicalException;
 import com.api.franchises.domain.model.TopProductPerBranch;
+import com.api.franchises.infrastructure.entrypoints.mapper.ReportingMapper;
 import com.api.franchises.infrastructure.entrypoints.util.ErrorDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,7 @@ import static com.api.franchises.infrastructure.entrypoints.util.ResponseHandler
 public class ReportingHandlerImpl {
 
     private final ReportingServicePort reportingServicePort;
+    private final ReportingMapper reportingMapper;
 
     public Mono<ServerResponse> topProductPerBranch(ServerRequest request) {
         final String messageId = getMessageId(request) != null
@@ -34,6 +36,7 @@ public class ReportingHandlerImpl {
                 : UUID.randomUUID().toString();
         Long franchiseId = Long.valueOf(request.pathVariable("franchiseId"));
         return reportingServicePort.topProductPerBranch(franchiseId)
+                .map(reportingMapper::toResponse)
                 .collectList()
                 .flatMap(list -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
