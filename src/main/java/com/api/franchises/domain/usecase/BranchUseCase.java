@@ -34,7 +34,7 @@ public class BranchUseCase implements BranchServicePort {
     public Mono<Void> updateNameBranch(Long franchiseId, Long branchId, String newName) {
         return franchisePersistencePort.existById(franchiseId)
                 .flatMap(exists -> exists
-                ? franchisePersistencePort.updateNameFranchise(franchiseId, branchId, newName)
+                ? branchPersistencePort.updateNameBranch(franchiseId, branchId, newName)
                 : Mono.error(new BusinessException(TechnicalMessage.FRANCHISE_NOT_FOUND)))
                 .flatMap(rows -> rows > 0
                 ? Mono.<Void>empty()
