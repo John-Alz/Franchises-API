@@ -58,4 +58,15 @@ public class ProductUseCase implements ProductServicePort  {
                         : Mono.error(new BusinessException(TechnicalMessage.PRODUCT_NOT_IN_BRANCH_OR_NOT_FOUND)));
     }
 
+    @Override
+    public Mono<Void> updateNameProduct(Long branchId, Long productId, String name) {
+        return branchPersistencePort.existById(branchId)
+                .flatMap(exist -> exist
+                        ? productPersistencePort.updateNameProduct(branchId, productId, name)
+                        : Mono.error(new BusinessException(TechnicalMessage.BRANCH_NOT_FOUND)))
+                .flatMap(rows -> rows > 0
+                        ? Mono.<Void>empty()
+                        : Mono.error(new BusinessException(TechnicalMessage.PRODUCT_NOT_IN_BRANCH_OR_NOT_FOUND)));
+    }
+
 }
