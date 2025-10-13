@@ -2,6 +2,7 @@ package com.api.franchises.infrastructure.entrypoints;
 
 import com.api.franchises.infrastructure.entrypoints.handler.BranchHandlerImpl;
 import com.api.franchises.infrastructure.entrypoints.handler.FranchiseHandlerImpl;
+import com.api.franchises.infrastructure.entrypoints.handler.ProductHandlerImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
@@ -14,9 +15,9 @@ import static com.api.franchises.infrastructure.entrypoints.util.Constants.BASE;
 public class ProductRouterRest {
 
     @Bean
-    public RouterFunction<ServerResponse> productRouterFunction(BranchHandlerImpl handler) {
+    public RouterFunction<ServerResponse> productRouterFunction(ProductHandlerImpl handler) {
         return RouterFunctions.route()
-                .POST(BASE + "/branches/{branchId}/products", handler::createBranch)
+                .POST(BASE + "/branches/{branchId}/products", handler::createProduct)
                 .build();
     }
 
