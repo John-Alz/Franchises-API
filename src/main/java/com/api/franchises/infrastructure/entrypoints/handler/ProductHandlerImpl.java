@@ -5,6 +5,7 @@ import com.api.franchises.domain.enums.TechnicalMessage;
 import com.api.franchises.domain.exceptions.BusinessException;
 import com.api.franchises.domain.exceptions.TechnicalException;
 import com.api.franchises.infrastructure.entrypoints.dto.ProductDTO;
+import com.api.franchises.infrastructure.entrypoints.dto.UpdateNameRequest;
 import com.api.franchises.infrastructure.entrypoints.dto.UpdateStockRequest;
 import com.api.franchises.infrastructure.entrypoints.mapper.ProductMapper;
 import com.api.franchises.infrastructure.entrypoints.util.ErrorDTO;
@@ -130,5 +131,40 @@ public class ProductHandlerImpl {
                                 .param(ex.getTechnicalMessage().getParam())
                                 .build())));
     }
+
+
+    public Mono<ServerResponse> updateNameProduct(ServerRequest request) {
+        final String messageId = getMessageId(request) != null
+                ? getMessageId(request)
+                : UUID.randomUUID().toString();
+        Long branchId = Long.valueOf(request.pathVariable("branchId"));
+        Long productId = Long.valueOf(request.pathVariable("productId"));
+        return request.bodyToMono(UpdateNameRequest.class)
+                .flatMap(dto -> productServicePort.updateNameProduct(branchId, productId, dto.getNewName()))
+                .then(ServerResponse.noContent().build())
+                .contextWrite(Context.of(X_MESSAGE_ID, messageId))
+                .doOnError(ex -> log.error(PRODUCT_ERROR, ex))
+                .onErrorResume(BusinessException.class, ex -> buildErrorResponse(
+                        HttpStatus.BAD_REQUEST,
+                        messageId,
+                        TechnicalMessage.INVALID_PARAMETERS,
+                        List.of(ErrorDTO.builder()
+                                .code(ex.getTechnicalMessage().getCode())
+                                .message(ex.getTechnicalMessage().getMessage())
+                                .param(ex.getTechnicalMessage().getParam())
+                                .build())
+                ))
+                .onErrorResume(TechnicalException.class, ex -> buildErrorResponse(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        messageId,
+                        TechnicalMessage.INTERNAL_ERROR,
+                        List.of(ErrorDTO.builder()
+                                .code(ex.getTechnicalMessage().getCode())
+                                .message(ex.getTechnicalMessage().getMessage())
+                                .param(ex.getTechnicalMessage().getParam())
+                                .build())));
+    }
+
+
 
 }

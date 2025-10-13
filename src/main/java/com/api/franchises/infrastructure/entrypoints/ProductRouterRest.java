@@ -20,6 +20,7 @@ public class ProductRouterRest {
                 .POST(BASE + "/branches/{branchId}/products", handler::createProduct)
                 .DELETE(BASE + "/branches/{branchId}/products/{productId}", handler::deleteProduct)
                 .PATCH(BASE + "/branches/{branchId}/products/{productId}", handler::updateStockProduct)
+                .PATCH(BASE + "/branches/{branchId}/products/{productId}/name", handler::updateNameProduct)
                 .build();
     }
 
