@@ -4,17 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-import java.util.List;
-
+@Table(name = "branches")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class BranchEntity {
 
-    private String id;
+    @Id
+    private Long id;
     private String name;
-    private List<ProductEntity> products;
+    @Column("franchise_id")
+    private Long franchiseId;
 
 }

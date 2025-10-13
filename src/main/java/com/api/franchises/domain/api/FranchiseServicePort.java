@@ -7,4 +7,5 @@ public interface FranchiseServicePort {
 
     Mono<Franchise> saveFranchise(Franchise franchise, String messageId);
 
+
 }

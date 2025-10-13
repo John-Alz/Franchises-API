@@ -5,6 +5,6 @@ import reactor.core.publisher.Mono;
 
 public interface BranchServicePort {
 
-    Mono<Branch> saveBranch(Branch branch);
+    Mono<Branch> saveBranch(Long franchiseId, Branch branch, String messageId);
 
 }
