@@ -16,6 +16,7 @@ public class BranchRouterRest {
     public RouterFunction<ServerResponse> branchRouterFunction(BranchHandlerImpl handler) {
         return RouterFunctions.route()
                 .POST(BASE + "/franchises/{franchiseId}/branches", handler::createBranch)
+                .PATCH(BASE + "/franchises/{franchiseId}/branches/{branchId}/name", handler::updateNameBranch )
                 .build();
     }
 

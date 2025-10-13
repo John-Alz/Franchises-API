@@ -7,6 +7,8 @@ public interface BranchPersistencePort {
 
     Mono<Branch> saveBranch(Long franchiseId, Branch branch);
     Mono<Boolean> existById(Long id);
+    Mono<Integer> updateNameBranch(Long franchiseId, Long branchId, String newName);
+
 
 
 }

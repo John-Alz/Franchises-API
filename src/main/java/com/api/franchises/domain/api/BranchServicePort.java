@@ -6,5 +6,6 @@ import reactor.core.publisher.Mono;
 public interface BranchServicePort {
 
     Mono<Branch> saveBranch(Long franchiseId, Branch branch, String messageId);
+    Mono<Void> updateNameBranch(Long franchiseId, Long branchId, String newName);
 
 }
