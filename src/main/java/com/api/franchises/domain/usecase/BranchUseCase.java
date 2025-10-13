@@ -22,7 +22,11 @@ public class BranchUseCase implements BranchServicePort {
     public Mono<Branch> saveBranch(Long franchiseId, Branch branch, String messageId) {
         return franchisePersistencePort.existById(franchiseId)
                 .filter(exist -> exist)
-                .switchIfEmpty(Mono.error(new BusinessException(TechnicalMessage.FRANCHISE_NOTFOUND_EXISTS)))
-                .flatMap(ignore -> branchPersistencePort.saveBranch(franchiseId, branch));
+                .switchIfEmpty(Mono.error(new BusinessException(TechnicalMessage.FRANCHISE_NOT_FOUND)))
+                .flatMap(ignore -> branchPersistencePort.saveBranch(franchiseId, new Branch(
+                        null,
+                        branch.name(),
+                        franchiseId
+                )));
     }
 }

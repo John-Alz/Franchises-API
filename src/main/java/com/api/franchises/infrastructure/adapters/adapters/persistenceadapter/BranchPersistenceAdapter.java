@@ -16,11 +16,12 @@ public class BranchPersistenceAdapter implements BranchPersistencePort {
 
     @Override
     public Mono<Branch> saveBranch(Long franchiseId, Branch branch) {
-        BranchEntity newBranch = new BranchEntity();
-        newBranch.setId(null);
-        newBranch.setName(branch.name());
-        newBranch.setFranchiseId(franchiseId);
-        return branchRepository.save(newBranch)
+        return branchRepository.save(branchEntityMapper.toEntity(branch))
                 .map(branchEntityMapper::toModel);
+    }
+
+    @Override
+    public Mono<Boolean> existById(Long id) {
+        return branchRepository.existsById(id);
     }
 }

@@ -13,7 +13,7 @@ import static com.api.franchises.infrastructure.entrypoints.util.Constants.BASE;
 public class BranchRouterRest {
 
     @Bean
-    public RouterFunction<ServerResponse> BranchrouterFunction(BranchHandlerImpl handler) {
+    public RouterFunction<ServerResponse> branchRouterFunction(BranchHandlerImpl handler) {
         return RouterFunctions.route()
                 .POST(BASE + "/franchises/{franchiseId}/branches", handler::createBranch)
                 .build();

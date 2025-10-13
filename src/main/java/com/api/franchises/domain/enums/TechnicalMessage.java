@@ -17,8 +17,11 @@ public enum TechnicalMessage {
     FRANCHISE_CREATED("201", "Franchise created successfully", ""),
     ADAPTER_RESPONSE_NOT_FOUND("404-0", "invalid email, please verify", ""),
     FRANCHISE_ALREADY_EXISTS("400","La franquicia ya está registrada." ,"" ),
-    FRANCHISE_NOTFOUND_EXISTS("400","La franquicia no existe." ,"" ),
-    BRANCH_CREATED("201", "Branch created successfully", "");
+    FRANCHISE_NOT_FOUND("400","La franquicia no existe." ,"" ),
+    BRANCH_CREATED("201", "Branch created successfully", ""),
+    BRANCH_NOT_FOUND("400","La sucursal no existe." ,"" ),
+    PRODUCT_CREATED("201", "Product created successfully", "");
+
 
 
     private final String code;
