@@ -18,6 +18,7 @@ public class ProductRouterRest {
     public RouterFunction<ServerResponse> productRouterFunction(ProductHandlerImpl handler) {
         return RouterFunctions.route()
                 .POST(BASE + "/branches/{branchId}/products", handler::createProduct)
+                .DELETE(BASE + "/branches/{branchId}/products/{productId}", handler::deleteProduct)
                 .build();
     }
 

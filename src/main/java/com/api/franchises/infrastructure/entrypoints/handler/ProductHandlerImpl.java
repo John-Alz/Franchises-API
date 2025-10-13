@@ -68,4 +68,35 @@ public class ProductHandlerImpl {
                                 .build())));
     }
 
+    public Mono<ServerResponse> deleteProduct(ServerRequest request) {
+        final String messageId = getMessageId(request) != null
+                ? getMessageId(request)
+                : UUID.randomUUID().toString();
+        Long branchId = Long.valueOf(request.pathVariable("branchId"));
+        Long productId = Long.valueOf(request.pathVariable("productId"));
+        return productServicePort.deleteProduct(branchId, productId, messageId)
+                .then(ServerResponse.noContent().build())
+                .contextWrite(Context.of(X_MESSAGE_ID, messageId))
+                .doOnError(ex -> log.error(FRANCHISE_ERROR, ex))
+                .onErrorResume(BusinessException.class, ex -> buildErrorResponse(
+                        HttpStatus.BAD_REQUEST,
+                        messageId,
+                        TechnicalMessage.INVALID_PARAMETERS,
+                        List.of(ErrorDTO.builder()
+                                .code(ex.getTechnicalMessage().getCode())
+                                .message(ex.getTechnicalMessage().getMessage())
+                                .param(ex.getTechnicalMessage().getParam())
+                                .build())
+                ))
+                .onErrorResume(TechnicalException.class, ex -> buildErrorResponse(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        messageId,
+                        TechnicalMessage.INTERNAL_ERROR,
+                        List.of(ErrorDTO.builder()
+                                .code(ex.getTechnicalMessage().getCode())
+                                .message(ex.getTechnicalMessage().getMessage())
+                                .param(ex.getTechnicalMessage().getParam())
+                                .build())));
+    }
+
 }

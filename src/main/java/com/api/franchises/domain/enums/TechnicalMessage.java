@@ -21,6 +21,7 @@ public enum TechnicalMessage {
     BRANCH_CREATED("201", "Branch created successfully", ""),
     BRANCH_NOT_FOUND("400","La sucursal no existe." ,"" ),
     PRODUCT_CREATED("201", "Product created successfully", ""),
+    PRODUCT_DELETED("200", "Product deleted successfully", ""),
     PRODUCT_NOT_IN_BRANCH_OR_NOT_FOUND("400", "El producto no pertenece a esta sucursal o no existe", "");
 
 
