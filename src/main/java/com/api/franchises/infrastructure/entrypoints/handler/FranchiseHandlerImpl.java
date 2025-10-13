@@ -25,7 +25,7 @@ import static com.api.franchises.infrastructure.entrypoints.util.Constants.X_MES
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class FranchiseHandler {
+public class FranchiseHandlerImpl {
 
     private final FranchiseServicePort franchiseServicePort;
     private final FranchiseMapper franchiseMapper;
