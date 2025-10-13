@@ -31,4 +31,17 @@ public class ProductUseCase implements ProductServicePort  {
                         branchId
                 )));
     }
+
+    @Override
+    public Mono<Void> deleteProduct(Long branchId, Long productId, String messageId) {
+        return branchPersistencePort.existById(branchId)
+                .flatMap(exist -> exist
+                ? productPersistencePort.deleteProduct(branchId, productId)
+                : Mono.error(new BusinessException(TechnicalMessage.BRANCH_NOT_FOUND)))
+                .flatMap(rows -> rows > 0
+                ? Mono.<Void>empty()
+                : Mono.error(new BusinessException(TechnicalMessage.PRODUCT_NOT_IN_BRANCH_OR_NOT_FOUND)));
+    }
+
+
 }
