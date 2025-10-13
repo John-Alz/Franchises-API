@@ -18,7 +18,9 @@ import reactor.util.context.Context;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
+import static com.api.franchises.infrastructure.entrypoints.util.Constants.FRANCHISE_ERROR;
 import static com.api.franchises.infrastructure.entrypoints.util.Constants.X_MESSAGE_ID;
 
 
@@ -31,17 +33,19 @@ public class FranchiseHandlerImpl {
     private final FranchiseMapper franchiseMapper;
 
     public Mono<ServerResponse> createFranchise(ServerRequest request) {
-        String messageId = getMessageId(request);
+        final String messageId = getMessageId(request) != null
+                ? getMessageId(request)
+                : UUID.randomUUID().toString();
         return request.bodyToMono(FranchiseDTO.class)
                 .flatMap(franchise -> franchiseServicePort.saveFranchise(franchiseMapper.franchiseDTOToFranchise(franchise), messageId)
                         .doOnSuccess(savedFranchise -> log.info("Franchise created successfully with messageId: {}", messageId))
                 )
                 .flatMap(franchise -> ServerResponse
                         .status(HttpStatus.CREATED)
-                        .bodyValue(TechnicalMessage.FRANCHISE_CREATED.getMessage())
-                        .contextWrite(Context.of(X_MESSAGE_ID, messageId))
-                )
-                .onErrorResume(BusinessException.class, ex -> buildErrorReponse(
+                        .bodyValue(TechnicalMessage.FRANCHISE_CREATED.getMessage()))
+                .contextWrite(Context.of(X_MESSAGE_ID, messageId))
+                .doOnError(ex -> log.error(FRANCHISE_ERROR, ex))
+                .onErrorResume(BusinessException.class, ex -> buildErrorResponse(
                         HttpStatus.BAD_REQUEST,
                         messageId,
                         TechnicalMessage.INVALID_PARAMETERS,
@@ -54,7 +58,7 @@ public class FranchiseHandlerImpl {
     }
 
 
-    private Mono<ServerResponse> buildErrorReponse(HttpStatus status, String identifier, TechnicalMessage message, List<ErrorDTO> errors) {
+    private Mono<ServerResponse> buildErrorResponse(HttpStatus status, String identifier, TechnicalMessage message, List<ErrorDTO> errors) {
         return Mono.defer(() -> {
             APIResponse apiResponse = APIResponse
                     .builder()
