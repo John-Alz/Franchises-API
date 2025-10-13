@@ -19,6 +19,7 @@ public class ProductRouterRest {
         return RouterFunctions.route()
                 .POST(BASE + "/branches/{branchId}/products", handler::createProduct)
                 .DELETE(BASE + "/branches/{branchId}/products/{productId}", handler::deleteProduct)
+                .PATCH(BASE + "/branches/{branchId}/products/{productId}", handler::updateStockProduct)
                 .build();
     }
 

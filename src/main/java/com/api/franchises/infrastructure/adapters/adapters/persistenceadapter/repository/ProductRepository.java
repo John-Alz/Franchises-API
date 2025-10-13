@@ -13,4 +13,8 @@ public interface ProductRepository extends ReactiveCrudRepository<ProductEntity,
     @Modifying
     @Query("DELETE FROM products WHERE id = :id AND branch_id = :branchId")
     Mono<Integer> deleteByIdAndBranchId(Long id, Long branchId);
+
+    @Modifying
+    @Query("UPDATE products SET stock = :newStock WHERE id = :productId AND branch_id = :branchId")
+    Mono<Integer> updateStockInBranch(Long branchId, Long productId, int newStock);
 }

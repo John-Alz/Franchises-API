@@ -27,4 +27,9 @@ public class ProductPersistenceAdapter implements ProductPersistencePort {
                 .doOnNext(count -> log.info("ROWS ADAPTER: {}", count));
     }
 
+    @Override
+    public Mono<Integer> updateStockProduct(Long branchId, Long productId, int newStock) {
+        return productRepository.updateStockInBranch(branchId, productId, newStock);
+    }
+
 }
