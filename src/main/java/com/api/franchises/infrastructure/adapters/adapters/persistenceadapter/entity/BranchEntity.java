@@ -15,6 +15,6 @@ public class BranchEntity {
 
     private String id;
     private String name;
-    private List<ProductEntity> productEntities;
+    private List<ProductEntity> products;
 
 }

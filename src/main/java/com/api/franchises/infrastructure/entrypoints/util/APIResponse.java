@@ -12,11 +12,11 @@ import java.util.List;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString
-public class APIResponse {
+public class APIResponse<T> {
     private String code;
     private String message;
     private String identifier;
     private String date;
-    private FranchiseDTO data;
+    private T data;
     private List<ErrorDTO> errors;
 }

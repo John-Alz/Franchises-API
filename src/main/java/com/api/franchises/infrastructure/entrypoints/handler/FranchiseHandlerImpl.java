@@ -3,6 +3,7 @@ package com.api.franchises.infrastructure.entrypoints.handler;
 import com.api.franchises.domain.api.FranchiseServicePort;
 import com.api.franchises.domain.enums.TechnicalMessage;
 import com.api.franchises.domain.exceptions.BusinessException;
+import com.api.franchises.domain.exceptions.TechnicalException;
 import com.api.franchises.infrastructure.entrypoints.dto.FranchiseDTO;
 import com.api.franchises.infrastructure.entrypoints.mapper.FranchiseMapper;
 import com.api.franchises.infrastructure.entrypoints.util.APIResponse;
@@ -22,6 +23,10 @@ import java.util.UUID;
 
 import static com.api.franchises.infrastructure.entrypoints.util.Constants.FRANCHISE_ERROR;
 import static com.api.franchises.infrastructure.entrypoints.util.Constants.X_MESSAGE_ID;
+import static com.api.franchises.infrastructure.entrypoints.util.ResponseHandler.buildSuccessResponse;
+import static com.api.franchises.infrastructure.entrypoints.util.ResponseHandler.buildErrorResponse;
+
+
 
 
 @Slf4j
@@ -40,9 +45,12 @@ public class FranchiseHandlerImpl {
                 .flatMap(franchise -> franchiseServicePort.saveFranchise(franchiseMapper.franchiseDTOToFranchise(franchise), messageId)
                         .doOnSuccess(savedFranchise -> log.info("Franchise created successfully with messageId: {}", messageId))
                 )
-                .flatMap(franchise -> ServerResponse
-                        .status(HttpStatus.CREATED)
-                        .bodyValue(TechnicalMessage.FRANCHISE_CREATED.getMessage()))
+                .flatMap(franchise -> buildSuccessResponse(
+                        HttpStatus.CREATED,
+                        messageId,
+                        TechnicalMessage.FRANCHISE_CREATED,
+                        franchise
+                ))
                 .contextWrite(Context.of(X_MESSAGE_ID, messageId))
                 .doOnError(ex -> log.error(FRANCHISE_ERROR, ex))
                 .onErrorResume(BusinessException.class, ex -> buildErrorResponse(
@@ -54,24 +62,19 @@ public class FranchiseHandlerImpl {
                                         .message(ex.getTechnicalMessage().getMessage())
                                         .param(ex.getTechnicalMessage().getParam())
                                 .build())
-                ));
+                ))
+                .onErrorResume(TechnicalException.class, ex -> buildErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                messageId,
+                TechnicalMessage.INTERNAL_ERROR,
+                List.of(ErrorDTO.builder()
+                        .code(ex.getTechnicalMessage().getCode())
+                        .message(ex.getTechnicalMessage().getMessage())
+                        .param(ex.getTechnicalMessage().getParam())
+                        .build())));
     }
 
 
-    private Mono<ServerResponse> buildErrorResponse(HttpStatus status, String identifier, TechnicalMessage message, List<ErrorDTO> errors) {
-        return Mono.defer(() -> {
-            APIResponse apiResponse = APIResponse
-                    .builder()
-                    .code(message.getCode())
-                    .message(message.getMessage())
-                    .identifier(identifier)
-                    .date(Instant.now().toString())
-                    .errors(errors)
-                    .build();
-            return ServerResponse.status(status)
-                    .bodyValue(apiResponse);
-        });
-    }
 
     private String getMessageId(ServerRequest serverRequest) {
         return serverRequest.headers().firstHeader(X_MESSAGE_ID);
