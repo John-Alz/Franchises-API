@@ -21,10 +21,8 @@ public class ProductUseCase implements ProductServicePort  {
 
     @Override
     public Mono<Product> saveProduct(Long branchId, Product product, String messageId) {
-        return branchPersistencePort.existById(branchId)
-                .filter(exist -> exist)
-                .switchIfEmpty(Mono.error(new BusinessException(TechnicalMessage.BRANCH_NOT_FOUND)))
-                .flatMap(ignore -> productPersistencePort.saveProduct(new Product(
+        return validateBranchExists(branchId)
+                .then(productPersistencePort.saveProduct(new Product(
                         null,
                         product.name(),
                         product.stock(),
@@ -34,38 +32,36 @@ public class ProductUseCase implements ProductServicePort  {
 
     @Override
     public Mono<Void> deleteProduct(Long branchId, Long productId, String messageId) {
-        return branchPersistencePort.existById(branchId)
-                .flatMap(exist -> exist
-                ? productPersistencePort.deleteProduct(branchId, productId)
-                : Mono.error(new BusinessException(TechnicalMessage.BRANCH_NOT_FOUND)))
-                .flatMap(rows -> rows > 0
-                ? Mono.<Void>empty()
-                : Mono.error(new BusinessException(TechnicalMessage.PRODUCT_NOT_IN_BRANCH_OR_NOT_FOUND)));
+        return executeProductModification(branchId, productPersistencePort.deleteProduct(branchId, productId));
     }
 
     @Override
     public Mono<Void> updateStockProduct(Long branchId, Long productId, int newStock) {
-        if (newStock < Constants.MIN_STOCK) {
+        if (newStock < Constants.MIN_VALUE) {
             return Mono.error(new BusinessException(TechnicalMessage.NEGATIVE_STOCK));
         }
-        return branchPersistencePort.existById(branchId)
-                .flatMap(exist -> exist
-                ? productPersistencePort.updateStockProduct(branchId, productId, newStock)
-                : Mono.error(new BusinessException(TechnicalMessage.BRANCH_NOT_FOUND)))
-                .flatMap(rows -> rows > 0
-                        ? Mono.<Void>empty()
-                        : Mono.error(new BusinessException(TechnicalMessage.PRODUCT_NOT_IN_BRANCH_OR_NOT_FOUND)));
+        return executeProductModification(branchId, productPersistencePort.updateStockProduct(branchId, productId, newStock));
     }
 
     @Override
     public Mono<Void> updateNameProduct(Long branchId, Long productId, String name) {
+        return executeProductModification(branchId, productPersistencePort.updateNameProduct(branchId, productId, name));
+    }
+
+
+    private Mono<Void> validateBranchExists(Long branchId) {
         return branchPersistencePort.existById(branchId)
-                .flatMap(exist -> exist
-                        ? productPersistencePort.updateNameProduct(branchId, productId, name)
-                        : Mono.error(new BusinessException(TechnicalMessage.BRANCH_NOT_FOUND)))
-                .flatMap(rows -> rows > 0
-                        ? Mono.<Void>empty()
-                        : Mono.error(new BusinessException(TechnicalMessage.PRODUCT_NOT_IN_BRANCH_OR_NOT_FOUND)));
+                .filter(exist -> exist)
+                .switchIfEmpty(Mono.error(new BusinessException(TechnicalMessage.BRANCH_NOT_FOUND)))
+                .then();
+    }
+
+    private Mono<Void> executeProductModification(Long branchId, Mono<Integer> operation) {
+        return validateBranchExists(branchId)
+                .then(operation)
+                .filter(rowsAffected -> rowsAffected > Constants.MIN_VALUE)
+                .switchIfEmpty(Mono.error(new BusinessException(TechnicalMessage.PRODUCT_NOT_IN_BRANCH_OR_NOT_FOUND)))
+                .then();
     }
 
 }

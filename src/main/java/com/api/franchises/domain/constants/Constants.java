@@ -4,7 +4,7 @@ public class Constants {
 
     private Constants() {}
 
-    public static final int MIN_STOCK = 0;
+    public static final int MIN_VALUE = 0;
 
 
 }
