@@ -4,7 +4,6 @@ import com.api.franchises.domain.api.ProductServicePort;
 import com.api.franchises.domain.constants.Constants;
 import com.api.franchises.domain.enums.TechnicalMessage;
 import com.api.franchises.domain.exceptions.BusinessException;
-import com.api.franchises.domain.model.Branch;
 import com.api.franchises.domain.model.Product;
 import com.api.franchises.domain.spi.BranchPersistencePort;
 import com.api.franchises.domain.spi.ProductPersistencePort;
@@ -53,6 +52,17 @@ public class ProductUseCase implements ProductServicePort  {
                 .flatMap(exist -> exist
                 ? productPersistencePort.updateStockProduct(branchId, productId, newStock)
                 : Mono.error(new BusinessException(TechnicalMessage.BRANCH_NOT_FOUND)))
+                .flatMap(rows -> rows > 0
+                        ? Mono.<Void>empty()
+                        : Mono.error(new BusinessException(TechnicalMessage.PRODUCT_NOT_IN_BRANCH_OR_NOT_FOUND)));
+    }
+
+    @Override
+    public Mono<Void> updateNameProduct(Long branchId, Long productId, String name) {
+        return branchPersistencePort.existById(branchId)
+                .flatMap(exist -> exist
+                        ? productPersistencePort.updateNameProduct(branchId, productId, name)
+                        : Mono.error(new BusinessException(TechnicalMessage.BRANCH_NOT_FOUND)))
                 .flatMap(rows -> rows > 0
                         ? Mono.<Void>empty()
                         : Mono.error(new BusinessException(TechnicalMessage.PRODUCT_NOT_IN_BRANCH_OR_NOT_FOUND)));

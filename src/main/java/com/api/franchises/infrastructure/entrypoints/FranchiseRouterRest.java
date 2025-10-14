@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import static com.api.franchises.infrastructure.entrypoints.util.Constants.BASE;
+import static com.api.franchises.infrastructure.entrypoints.util.Constants.BASE_URL;
 
 @Configuration
 public class FranchiseRouterRest {
@@ -14,8 +14,8 @@ public class FranchiseRouterRest {
     @Bean
     public RouterFunction<ServerResponse> franchiseRouterFunction(FranchiseHandlerImpl handler) {
         return RouterFunctions.route()
-                .POST(BASE + "/franchises", handler::createFranchise)
-                .PATCH(BASE + "/franchises/{franchiseId}/name", handler::updateNameFranchise)
+                .POST(BASE_URL + "/franchises", handler::createFranchise)
+                .PATCH(BASE_URL + "/franchises/{franchiseId}/name", handler::updateNameFranchise)
                 .build();
     }
 

@@ -14,7 +14,7 @@ public class ResponseHandler {
 
     public static Mono<ServerResponse> buildErrorResponse(HttpStatus status, String identifier, TechnicalMessage message, List<ErrorDTO> errors) {
         return Mono.defer(() -> {
-            APIResponse apiResponse = APIResponse
+            APIResponse<Object> apiResponse = APIResponse
                     .builder()
                     .code(message.getCode())
                     .message(message.getMessage())
@@ -29,7 +29,7 @@ public class ResponseHandler {
 
     public static  <T> Mono<ServerResponse> buildSuccessResponse(HttpStatus status, String identifier, TechnicalMessage message, T data) {
         return Mono.defer(() -> {
-            APIResponse apiResponse = APIResponse.builder()
+            APIResponse<Object> apiResponse = APIResponse.builder()
                     .code(message.getCode())
                     .message(message.getMessage())
                     .identifier(identifier)

@@ -7,7 +7,7 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import static com.api.franchises.infrastructure.entrypoints.util.Constants.BASE;
+import static com.api.franchises.infrastructure.entrypoints.util.Constants.BASE_URL;
 
 @Configuration
 public class BranchRouterRest {
@@ -15,8 +15,8 @@ public class BranchRouterRest {
     @Bean
     public RouterFunction<ServerResponse> branchRouterFunction(BranchHandlerImpl handler) {
         return RouterFunctions.route()
-                .POST(BASE + "/franchises/{franchiseId}/branches", handler::createBranch)
-                .PATCH(BASE + "/franchises/{franchiseId}/branches/{branchId}/name", handler::updateNameBranch )
+                .POST(BASE_URL + "/franchises/{franchiseId}/branches", handler::createBranch)
+                .PATCH(BASE_URL + "/franchises/{franchiseId}/branches/{branchId}/name", handler::updateNameBranch )
                 .build();
     }
 

@@ -1,6 +1,5 @@
 package com.api.franchises.infrastructure.entrypoints.util;
 
-import com.api.franchises.infrastructure.entrypoints.dto.FranchiseDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 

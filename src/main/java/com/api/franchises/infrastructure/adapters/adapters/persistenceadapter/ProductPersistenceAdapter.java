@@ -32,4 +32,9 @@ public class ProductPersistenceAdapter implements ProductPersistencePort {
         return productRepository.updateStockInBranch(branchId, productId, newStock);
     }
 
+    @Override
+    public Mono<Integer> updateNameProduct(Long branchId, Long productId, String name) {
+        return productRepository.updateNameInBranch(branchId, productId, name);
+    }
+
 }

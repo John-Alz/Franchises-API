@@ -7,7 +7,6 @@ import com.api.franchises.domain.model.TopProductPerBranch;
 import com.api.franchises.domain.spi.FranchisePersistencePort;
 import com.api.franchises.domain.spi.ReportingPersistencePort;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 public class ReportingUseCase implements ReportingServicePort {
 
