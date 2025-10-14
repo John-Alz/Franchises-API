@@ -4,7 +4,6 @@ import com.api.franchises.domain.api.ProductServicePort;
 import com.api.franchises.domain.constants.Constants;
 import com.api.franchises.domain.enums.TechnicalMessage;
 import com.api.franchises.domain.exceptions.BusinessException;
-import com.api.franchises.domain.model.Branch;
 import com.api.franchises.domain.model.Product;
 import com.api.franchises.domain.spi.BranchPersistencePort;
 import com.api.franchises.domain.spi.ProductPersistencePort;

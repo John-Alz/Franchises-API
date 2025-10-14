@@ -10,5 +10,5 @@ public class Constants {
     public static final String PRODUCT_ERROR = "Error on Product - [ERROR]";
 
 
-    public static String BASE = "/api/v1";
+    public static final String BASE_URL = "/api/v1";
 }

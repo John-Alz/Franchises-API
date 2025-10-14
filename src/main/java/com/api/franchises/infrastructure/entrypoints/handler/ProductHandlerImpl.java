@@ -4,10 +4,12 @@ import com.api.franchises.domain.api.ProductServicePort;
 import com.api.franchises.domain.enums.TechnicalMessage;
 import com.api.franchises.domain.exceptions.BusinessException;
 import com.api.franchises.domain.exceptions.TechnicalException;
+import com.api.franchises.infrastructure.entrypoints.constants.ConstantsEntryPoints;
 import com.api.franchises.infrastructure.entrypoints.dto.ProductDTO;
 import com.api.franchises.infrastructure.entrypoints.dto.UpdateNameRequest;
 import com.api.franchises.infrastructure.entrypoints.dto.UpdateStockRequest;
 import com.api.franchises.infrastructure.entrypoints.mapper.ProductMapper;
+import com.api.franchises.infrastructure.entrypoints.util.Constants;
 import com.api.franchises.infrastructure.entrypoints.util.ErrorDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +40,7 @@ public class ProductHandlerImpl {
         final String messageId = getMessageId(request) != null
                 ? getMessageId(request)
                 : UUID.randomUUID().toString();
-        Long branchId = Long.valueOf(request.pathVariable("branchId"));
+        Long branchId = Long.valueOf(request.pathVariable(ConstantsEntryPoints.BRANCH_ID));
         return request.bodyToMono(ProductDTO.class)
                 .flatMap(product -> productServicePort.saveProduct(branchId, productMapper.productDTOToProduct(product), messageId)
                         .doOnSuccess(savedUser -> log.info("Product created successfully with messageId: {}", messageId))
@@ -73,8 +75,8 @@ public class ProductHandlerImpl {
         final String messageId = getMessageId(request) != null
                 ? getMessageId(request)
                 : UUID.randomUUID().toString();
-        Long branchId = Long.valueOf(request.pathVariable("branchId"));
-        Long productId = Long.valueOf(request.pathVariable("productId"));
+        Long branchId = Long.valueOf(request.pathVariable(ConstantsEntryPoints.BRANCH_ID));
+        Long productId = Long.valueOf(request.pathVariable(ConstantsEntryPoints.PRODUCT_ID));
         return productServicePort.deleteProduct(branchId, productId, messageId)
                 .then(ServerResponse.noContent().build())
                 .contextWrite(Context.of(X_MESSAGE_ID, messageId))
@@ -104,8 +106,8 @@ public class ProductHandlerImpl {
         final String messageId = getMessageId(request) != null
                 ? getMessageId(request)
                 : UUID.randomUUID().toString();
-        Long branchId = Long.valueOf(request.pathVariable("branchId"));
-        Long productId = Long.valueOf(request.pathVariable("productId"));
+        Long branchId = Long.valueOf(request.pathVariable(ConstantsEntryPoints.BRANCH_ID));
+        Long productId = Long.valueOf(request.pathVariable(ConstantsEntryPoints.PRODUCT_ID));
         return request.bodyToMono(UpdateStockRequest.class)
                 .flatMap(dto -> productServicePort.updateStockProduct(branchId, productId, dto.getStock()))
                 .then(ServerResponse.noContent().build())
@@ -137,8 +139,8 @@ public class ProductHandlerImpl {
         final String messageId = getMessageId(request) != null
                 ? getMessageId(request)
                 : UUID.randomUUID().toString();
-        Long branchId = Long.valueOf(request.pathVariable("branchId"));
-        Long productId = Long.valueOf(request.pathVariable("productId"));
+        Long branchId = Long.valueOf(request.pathVariable(ConstantsEntryPoints.BRANCH_ID));
+        Long productId = Long.valueOf(request.pathVariable(ConstantsEntryPoints.PRODUCT_ID));
         return request.bodyToMono(UpdateNameRequest.class)
                 .flatMap(dto -> productServicePort.updateNameProduct(branchId, productId, dto.getNewName()))
                 .then(ServerResponse.noContent().build())

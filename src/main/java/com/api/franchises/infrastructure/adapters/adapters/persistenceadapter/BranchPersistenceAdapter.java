@@ -2,7 +2,6 @@ package com.api.franchises.infrastructure.adapters.adapters.persistenceadapter;
 
 import com.api.franchises.domain.model.Branch;
 import com.api.franchises.domain.spi.BranchPersistencePort;
-import com.api.franchises.infrastructure.adapters.adapters.persistenceadapter.entity.BranchEntity;
 import com.api.franchises.infrastructure.adapters.adapters.persistenceadapter.mapper.BranchEntityMapper;
 import com.api.franchises.infrastructure.adapters.adapters.persistenceadapter.repository.BranchRepository;
 import lombok.RequiredArgsConstructor;
