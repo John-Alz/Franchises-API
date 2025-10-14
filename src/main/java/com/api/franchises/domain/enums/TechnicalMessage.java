@@ -24,10 +24,8 @@ public enum TechnicalMessage {
     PRODUCT_NOT_IN_BRANCH_OR_NOT_FOUND("400", "The product does not belong to this branch or does not exist.", ""),
     NEGATIVE_STOCK("400", "The product's stock cannot be less than zero.", "");
 
-
-
-
     private final String code;
     private final String message;
     private final String param;
+
 }

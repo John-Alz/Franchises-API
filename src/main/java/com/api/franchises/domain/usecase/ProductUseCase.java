@@ -9,6 +9,8 @@ import com.api.franchises.domain.spi.BranchPersistencePort;
 import com.api.franchises.domain.spi.ProductPersistencePort;
 import reactor.core.publisher.Mono;
 
+import java.util.function.Supplier;
+
 public class ProductUseCase implements ProductServicePort  {
 
     private final ProductPersistencePort productPersistencePort;
@@ -22,17 +24,14 @@ public class ProductUseCase implements ProductServicePort  {
     @Override
     public Mono<Product> saveProduct(Long branchId, Product product, String messageId) {
         return validateBranchExists(branchId)
-                .then(productPersistencePort.saveProduct(new Product(
-                        null,
-                        product.name(),
-                        product.stock(),
-                        branchId
+                .then(Mono.defer(() -> productPersistencePort.saveProduct(
+                        new Product(null, product.name(), product.stock(), branchId)
                 )));
     }
 
     @Override
     public Mono<Void> deleteProduct(Long branchId, Long productId, String messageId) {
-        return executeProductModification(branchId, productPersistencePort.deleteProduct(branchId, productId));
+        return executeProductModification(branchId, () -> productPersistencePort.deleteProduct(branchId, productId));
     }
 
     @Override
@@ -40,12 +39,12 @@ public class ProductUseCase implements ProductServicePort  {
         if (newStock < Constants.MIN_VALUE) {
             return Mono.error(new BusinessException(TechnicalMessage.NEGATIVE_STOCK));
         }
-        return executeProductModification(branchId, productPersistencePort.updateStockProduct(branchId, productId, newStock));
+        return executeProductModification(branchId, () -> productPersistencePort.updateStockProduct(branchId, productId, newStock));
     }
 
     @Override
     public Mono<Void> updateNameProduct(Long branchId, Long productId, String name) {
-        return executeProductModification(branchId, productPersistencePort.updateNameProduct(branchId, productId, name));
+        return executeProductModification(branchId, () -> productPersistencePort.updateNameProduct(branchId, productId, name));
     }
 
 
@@ -56,9 +55,9 @@ public class ProductUseCase implements ProductServicePort  {
                 .then();
     }
 
-    private Mono<Void> executeProductModification(Long branchId, Mono<Integer> operation) {
+    private Mono<Void> executeProductModification(Long branchId,  Supplier<Mono<Integer>> operationSupplier) {
         return validateBranchExists(branchId)
-                .then(operation)
+                .then(Mono.defer(operationSupplier))
                 .filter(rowsAffected -> rowsAffected > Constants.MIN_VALUE)
                 .switchIfEmpty(Mono.error(new BusinessException(TechnicalMessage.PRODUCT_NOT_IN_BRANCH_OR_NOT_FOUND)))
                 .then();
