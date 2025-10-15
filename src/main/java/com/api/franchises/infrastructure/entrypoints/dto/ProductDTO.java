@@ -7,15 +7,15 @@ import lombok.Data;
 
 @Data
 @Builder(toBuilder = true)
-@Schema(name = "Product", description = "Datos de la franquicia")
+@Schema(name = "Product", description = "Product data")
 public class ProductDTO {
 
     @NotBlank
-    @Schema(example = "Pizza de peperoni", description = "Nombre del producto")
+    @Schema(example = "Pepperoni pizza", description = "Product name")
     private String name;
 
     @NotBlank
-    @Schema(example = "10", description = "Stock del producto")
+    @Schema(example = "10", description = "Product stock")
     private int stock;
 }
 

@@ -7,11 +7,11 @@ import lombok.Data;
 
 @Data
 @Builder(toBuilder = true)
-@Schema(name = "Franchise", description = "Datos de la franquicia")
+@Schema(name = "Franchise", description = "Franchise data")
 public class FranchiseDTO {
 
     @NotBlank
-    @Schema(example = "Pizza Planet", description = "Nombre de la franquicia")
+    @Schema(example = "Pizza Planet", description = "Franchise name")
     private String name;
 
 }

@@ -6,15 +6,15 @@ import lombok.Data;
 
 @Data
 @Builder(toBuilder = true)
-@Schema(name = "TopProductPerBranchResponse", description = "Producto top por sucursal")
+@Schema(name = "TopProductPerBranchResponse", description = "Top product per branch")
 public class TopProductPerBranchResponse {
 
-    @Schema(description = "ID de la sucursal", example = "10")
+    @Schema(description = "Branch ID", example = "10")
     private Long branchId;
-    @Schema(description = "Nombre de la sucursal", example = "Sucursal Centro")
+    @Schema(description = "Branch name", example = "Downtown branch")
     private String branchName;
 
-    @Schema(description = "Producto que ocupa el primer lugar en la sucursal")
+    @Schema(description = "Product that ranks first in the branch")
     private ProductSummary product;
 
 }

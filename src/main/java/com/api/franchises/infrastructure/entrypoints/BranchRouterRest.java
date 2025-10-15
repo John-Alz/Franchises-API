@@ -38,22 +38,22 @@ public class BranchRouterRest {
                     beanMethod = "createBranch",
                     operation = @Operation(
                             operationId = "createBranch",
-                            summary = "Crear una sucursal",
+                            summary = "Create a branch",
                             tags = {"Branches"},
-                            description = "Crea una nueva sucursal dentro de la franquicia especificada.",
+                            description = "Creates a new branch within the specified franchise.",
                             parameters = {
                                     @Parameter(
                                             name = "franchiseId",
                                             in = ParameterIn.PATH,
                                             required = true,
-                                            description = "ID de la franquicia",
+                                            description = "Franchise ID",
                                             schema = @Schema(type = "integer", format = "int64", example = "1")
                                     ),
                                     @Parameter(
                                             name = "X-Message-Id",
                                             in = ParameterIn.HEADER,
                                             required = false,
-                                            description = "ID de correlación opcional"
+                                            description = "Optional correlation ID"
                                     )
                             },
                             requestBody = @RequestBody(
@@ -66,7 +66,7 @@ public class BranchRouterRest {
                             responses = {
                                     @ApiResponse(
                                             responseCode = "201",
-                                            description = "Sucursal creada",
+                                            description = "Branch created",
                                             content = @Content(
                                                     mediaType = MediaType.TEXT_PLAIN_VALUE,
                                                     schema = @Schema(type = "string", example = "Branch created successfully")
@@ -74,12 +74,12 @@ public class BranchRouterRest {
                                     ),
                                     @ApiResponse(
                                             responseCode = "400",
-                                            description = "Parámetros inválidos",
+                                            description = "Invalid parameters",
                                             content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
                                     ),
                                     @ApiResponse(
                                             responseCode = "500",
-                                            description = "Error interno",
+                                            description = "Internal error",
                                             content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
                                     )
                             }
@@ -94,29 +94,29 @@ public class BranchRouterRest {
                     beanMethod = "updateNameBranch",
                     operation = @Operation(
                             operationId = "updateNameBranch",
-                            summary = "Actualizar el nombre de una sucursal",
+                            summary = "Update a branch name",
                             tags = {"Branches"},
-                            description = "Actualiza el nombre de la sucursal indicada dentro de la franquicia dada.",
+                            description = "Updates the name of the branch indicated within the given franchise.",
                             parameters = {
                                     @Parameter(
                                             name = "franchiseId",
                                             in = ParameterIn.PATH,
                                             required = true,
-                                            description = "ID de la franquicia",
+                                            description = "Franchise ID",
                                             schema = @Schema(type = "integer", format = "int64", example = "1")
                                     ),
                                     @Parameter(
                                             name = "branchId",
                                             in = ParameterIn.PATH,
                                             required = true,
-                                            description = "ID de la sucursal",
+                                            description = "Branch ID",
                                             schema = @Schema(type = "integer", format = "int64", example = "10")
                                     ),
                                     @Parameter(
                                             name = "X-Message-Id",
                                             in = ParameterIn.HEADER,
                                             required = false,
-                                            description = "ID de correlación opcional"
+                                            description = "Optional correlation ID"
                                     )
                             },
                             requestBody = @RequestBody(
@@ -129,16 +129,16 @@ public class BranchRouterRest {
                             responses = {
                                     @ApiResponse(
                                             responseCode = "204",
-                                            description = "Nombre actualizado (sin contenido)"
+                                            description = "Name updated (no content)"
                                     ),
                                     @ApiResponse(
                                             responseCode = "400",
-                                            description = "Parámetros inválidos",
+                                            description = "Invalid parameters",
                                             content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
                                     ),
                                     @ApiResponse(
                                             responseCode = "500",
-                                            description = "Error interno",
+                                            description = "Internal error",
                                             content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
                                     )
                             }
