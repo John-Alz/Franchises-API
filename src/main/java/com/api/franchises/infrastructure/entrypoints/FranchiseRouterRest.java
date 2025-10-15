@@ -37,15 +37,15 @@ public class FranchiseRouterRest {
                     beanMethod = "createFranchise",
                     operation = @Operation(
                             operationId = "createFranchise",
-                            summary = "Crear una franquicia",
+                            summary = "Create a franchise",
                             tags = {"Franchises"},
-                            description = "Crea una nueva franquicia y devuelve el recurso creado.",
+                            description = "Creates a new franchise and returns the created resource.",
                             parameters = {
                                     @Parameter(
                                             name = "X-Message-Id",
                                             in = ParameterIn.HEADER,
                                             required = false,
-                                            description = "ID de correlación opcional"
+                                            description = "Optional correlation ID"
                                     )
                             },
                             requestBody = @RequestBody(
@@ -58,7 +58,7 @@ public class FranchiseRouterRest {
                             responses = {
                                     @ApiResponse(
                                             responseCode = "201",
-                                            description = "Franquicia creada",
+                                            description = "Franchise created",
                                             content = @Content(
                                                     mediaType = MediaType.TEXT_PLAIN_VALUE,
                                                     schema = @Schema(type = "string", example = "Franchise created successfully.")
@@ -66,12 +66,12 @@ public class FranchiseRouterRest {
                                     ),
                                     @ApiResponse(
                                             responseCode = "400",
-                                            description = "Parámetros inválidos",
+                                            description = "Invalid parameters",
                                             content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
                                     ),
                                     @ApiResponse(
                                             responseCode = "500",
-                                            description = "Error interno",
+                                            description = "Internal error",
                                             content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
                                     )
                             }
@@ -86,22 +86,22 @@ public class FranchiseRouterRest {
                     beanMethod = "updateNameFranchise",
                     operation = @Operation(
                             operationId = "updateNameFranchise",
-                            summary = "Actualizar el nombre de una franquicia",
+                            summary = "Update a franchise name",
                             tags = {"Franchises"},
-                            description = "Actualiza el nombre de la franquicia indicada por su ID.",
+                            description = "Updates the name of the franchise specified by its ID.",
                             parameters = {
                                     @Parameter(
                                             name = "franchiseId",
                                             in = ParameterIn.PATH,
                                             required = true,
-                                            description = "ID de la franquicia",
+                                            description = "Franchise ID",
                                             schema = @Schema(type = "integer", format = "int64", example = "1")
                                     ),
                                     @Parameter(
                                             name = "X-Message-Id",
                                             in = ParameterIn.HEADER,
                                             required = false,
-                                            description = "ID de correlación opcional"
+                                            description = "Optional correlation ID"
                                     )
                             },
                             requestBody = @RequestBody(
@@ -114,16 +114,16 @@ public class FranchiseRouterRest {
                             responses = {
                                     @ApiResponse(
                                             responseCode = "204",
-                                            description = "Nombre actualizado (sin contenido)"
+                                            description = "Name updated (no content)"
                                     ),
                                     @ApiResponse(
                                             responseCode = "400",
-                                            description = "Parámetros inválidos",
+                                            description = "Invalid parameters",
                                             content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
                                     ),
                                     @ApiResponse(
                                             responseCode = "500",
-                                            description = "Error interno",
+                                            description = "Internal error",
                                             content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
                                     )
                             }

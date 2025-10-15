@@ -39,22 +39,22 @@ public class ProductRouterRest {
                     beanMethod = "createProduct",
                     operation = @Operation(
                             operationId = "createProduct",
-                            summary = "Crear producto en una sucursal",
+                            summary = "Create a product in a branch",
                             tags = {"Products"},
-                            description = "Crea un producto dentro de la sucursal especificada.",
+                            description = "Creates a product within the specified branch.",
                             parameters = {
                                     @Parameter(
                                             name = "branchId",
                                             in = ParameterIn.PATH,
                                             required = true,
-                                            description = "ID de la sucursal",
+                                            description = "Branch ID",
                                             schema = @Schema(type = "integer", format = "int64", example = "10")
                                     ),
                                     @Parameter(
                                             name = "X-Message-Id",
                                             in = ParameterIn.HEADER,
                                             required = false,
-                                            description = "ID de correlación opcional"
+                                            description = "Optional correlation ID"
                                     )
                             },
                             requestBody = @RequestBody(
@@ -67,7 +67,7 @@ public class ProductRouterRest {
                             responses = {
                                     @ApiResponse(
                                             responseCode = "201",
-                                            description = "Producto creado",
+                                            description = "Product created",
                                             content = @Content(
                                                     mediaType = MediaType.TEXT_PLAIN_VALUE,
                                                     schema = @Schema(type = "string", example = "Product created successfully")
@@ -75,12 +75,12 @@ public class ProductRouterRest {
                                     ),
                                     @ApiResponse(
                                             responseCode = "400",
-                                            description = "Parámetros inválidos",
+                                            description = "Invalid parameters",
                                             content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
                                     ),
                                     @ApiResponse(
                                             responseCode = "500",
-                                            description = "Error interno",
+                                            description = "Internal error",
                                             content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
                                     )
                             }
@@ -94,41 +94,41 @@ public class ProductRouterRest {
                     beanMethod = "deleteProduct",
                     operation = @Operation(
                             operationId = "deleteProduct",
-                            summary = "Eliminar un producto",
+                            summary = "Delete a product",
                             tags = {"Products"},
-                            description = "Elimina el producto indicado de la sucursal dada.",
+                            description = "Deletes the specified product from the given branch.",
                             parameters = {
                                     @Parameter(
                                             name = "branchId",
                                             in = ParameterIn.PATH,
                                             required = true,
-                                            description = "ID de la sucursal",
+                                            description = "Branch ID",
                                             schema = @Schema(type = "integer", format = "int64", example = "10")
                                     ),
                                     @Parameter(
                                             name = "productId",
                                             in = ParameterIn.PATH,
                                             required = true,
-                                            description = "ID del producto",
+                                            description = "Product ID",
                                             schema = @Schema(type = "integer", format = "int64", example = "1001")
                                     ),
                                     @Parameter(
                                             name = "X-Message-Id",
                                             in = ParameterIn.HEADER,
                                             required = false,
-                                            description = "ID de correlación opcional"
+                                            description = "Optional correlation ID"
                                     )
                             },
                             responses = {
-                                    @ApiResponse(responseCode = "204", description = "Producto eliminado"),
+                                    @ApiResponse(responseCode = "204", description = "Product deleted"),
                                     @ApiResponse(
                                             responseCode = "400",
-                                            description = "Parámetros inválidos",
+                                            description = "Invalid parameters",
                                             content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
                                     ),
                                     @ApiResponse(
                                             responseCode = "500",
-                                            description = "Error interno",
+                                            description = "Internal error",
                                             content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
                                     )
                             }
@@ -143,29 +143,29 @@ public class ProductRouterRest {
                     beanMethod = "updateStockProduct",
                     operation = @Operation(
                             operationId = "updateStockProduct",
-                            summary = "Actualizar stock de un producto",
+                            summary = "Update a product's stock",
                             tags = {"Products"},
-                            description = "Actualiza el stock del producto indicado en la sucursal dada.",
+                            description = "Updates the stock of the specified product in the given branch.",
                             parameters = {
                                     @Parameter(
                                             name = "branchId",
                                             in = ParameterIn.PATH,
                                             required = true,
-                                            description = "ID de la sucursal",
+                                            description = "Branch ID",
                                             schema = @Schema(type = "integer", format = "int64", example = "10")
                                     ),
                                     @Parameter(
                                             name = "productId",
                                             in = ParameterIn.PATH,
                                             required = true,
-                                            description = "ID del producto",
+                                            description = "Product ID",
                                             schema = @Schema(type = "integer", format = "int64", example = "1001")
                                     ),
                                     @Parameter(
                                             name = "X-Message-Id",
                                             in = ParameterIn.HEADER,
                                             required = false,
-                                            description = "ID de correlación opcional"
+                                            description = "Optional correlation ID"
                                     )
                             },
                             requestBody = @RequestBody(
@@ -176,15 +176,15 @@ public class ProductRouterRest {
                                     )
                             ),
                             responses = {
-                                    @ApiResponse(responseCode = "204", description = "Stock actualizado"),
+                                    @ApiResponse(responseCode = "204", description = "Stock updated"),
                                     @ApiResponse(
                                             responseCode = "400",
-                                            description = "Parámetros inválidos",
+                                            description = "Invalid parameters",
                                             content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
                                     ),
                                     @ApiResponse(
                                             responseCode = "500",
-                                            description = "Error interno",
+                                            description = "Internal error",
                                             content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
                                     )
                             }
@@ -199,29 +199,29 @@ public class ProductRouterRest {
                     beanMethod = "updateNameProduct",
                     operation = @Operation(
                             operationId = "updateNameProduct",
-                            summary = "Actualizar nombre de un producto",
+                            summary = "Update a product name",
                             tags = {"Products"},
-                            description = "Actualiza el nombre del producto indicado en la sucursal dada.",
+                            description = "Updates the name of the specified product in the given branch.",
                             parameters = {
                                     @Parameter(
                                             name = "branchId",
                                             in = ParameterIn.PATH,
                                             required = true,
-                                            description = "ID de la sucursal",
+                                            description = "Branch ID",
                                             schema = @Schema(type = "integer", format = "int64", example = "10")
                                     ),
                                     @Parameter(
                                             name = "productId",
                                             in = ParameterIn.PATH,
                                             required = true,
-                                            description = "ID del producto",
+                                            description = "Product ID",
                                             schema = @Schema(type = "integer", format = "int64", example = "1001")
                                     ),
                                     @Parameter(
                                             name = "X-Message-Id",
                                             in = ParameterIn.HEADER,
                                             required = false,
-                                            description = "ID de correlación opcional"
+                                            description = "Optional correlation ID"
                                     )
                             },
                             requestBody = @RequestBody(
@@ -232,15 +232,15 @@ public class ProductRouterRest {
                                     )
                             ),
                             responses = {
-                                    @ApiResponse(responseCode = "204", description = "Nombre actualizado"),
+                                    @ApiResponse(responseCode = "204", description = "Name updated"),
                                     @ApiResponse(
                                             responseCode = "400",
-                                            description = "Parámetros inválidos",
+                                            description = "Invalid parameters",
                                             content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
                                     ),
                                     @ApiResponse(
                                             responseCode = "500",
-                                            description = "Error interno",
+                                            description = "Internal error",
                                             content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
                                     )
                             }

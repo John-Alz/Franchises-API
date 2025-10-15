@@ -33,28 +33,28 @@ public class ReportingRoutesRest {
             beanMethod = "topProductPerBranch",
             operation = @Operation(
                     operationId = "topProductPerBranch",
-                    summary = "Top de productos por sucursal",
+                    summary = "Top products by branch",
                     tags = {"Report"},
-                    description = "Retorna, por cada sucursal de la franquicia, el producto con mejor desempeño (según tu regla de negocio).",
+                    description = "Returns, for each branch of the franchise, the best-performing product (according to your business rule).",
                     parameters = {
                             @Parameter(
                                     name = "franchiseId",
                                     in = ParameterIn.PATH,
                                     required = true,
-                                    description = "ID de la franquicia",
+                                    description = "Franchise ID",
                                     schema = @Schema(type = "integer", format = "int64", example = "1")
                             ),
                             @Parameter(
                                     name = "X-Message-Id",
                                     in = ParameterIn.HEADER,
                                     required = false,
-                                    description = "ID de correlación opcional"
+                                    description = "Optional correlation ID"
                             )
                     },
                     responses = {
                             @ApiResponse(
                                     responseCode = "200",
-                                    description = "Listado de top productos por sucursal",
+                                    description = "List of top products per branch",
                                     content = @Content(
                                             mediaType = MediaType.APPLICATION_JSON_VALUE,
                                             array = @ArraySchema(schema = @Schema(implementation = TopProductPerBranchResponse.class))
@@ -62,12 +62,12 @@ public class ReportingRoutesRest {
                             ),
                             @ApiResponse(
                                     responseCode = "400",
-                                    description = "Parámetros inválidos",
+                                    description = "Invalid parameters",
                                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
                             ),
                             @ApiResponse(
                                     responseCode = "500",
-                                    description = "Error interno",
+                                    description = "Internal error",
                                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
                             )
                     }

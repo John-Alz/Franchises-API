@@ -5,11 +5,11 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-@Schema(name = "UpdateStockRequest", description = "Petición para actualizar el stock del producto")
+@Schema(name = "UpdateStockRequest", description = "Request to update the product stock")
 public class UpdateStockRequest {
 
     @NotBlank
-    @Schema(example = "Nuevo Stock", description = "Nuevo stock para el producto")
+    @Schema(example = "New Stock", description = "New stock for the product")
     private int stock;
 
 }

@@ -6,13 +6,13 @@ import lombok.Data;
 
 @Data
 @Builder(toBuilder = true)
-@Schema(name = "ProductSummary", description = "Resumen del producto top")
+@Schema(name = "ProductSummary", description = "Top product summary")
 public class ProductSummary {
 
-    @Schema(description = "ID del producto", example = "1001")
+    @Schema(description = "Product ID", example = "1001")
     private Long productId;
-    @Schema(description = "Nombre del producto", example = "Pizza Napolitana")
+    @Schema(description = "Product name", example = "Neapolitan Pizza")
     private String productName;
-    @Schema(description = "Stock disponible", example = "47")
+    @Schema(description = "Available stock", example = "47")
     private Integer stock;
 }

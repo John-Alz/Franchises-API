@@ -7,11 +7,11 @@ import lombok.Data;
 
 @Data
 @Builder(toBuilder = true)
-@Schema(name = "UpdateNameRequest", description = "Petición para actualizar el nombre de la franquicia, sucursal y producto")
+@Schema(name = "UpdateNameRequest", description = "Request to update the name of the franchise, branch, and product")
 public class UpdateNameRequest {
 
     @NotBlank
-    @Schema(example = "Nuevo Nombre", description = "Nuevo nombre para la franquicia, sucursal y producto")
+    @Schema(example = "New Name", description = "New name for the franchise, branch, and product")
     private String newName;
 
 }
