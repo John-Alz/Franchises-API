@@ -45,12 +45,9 @@ public class FranchiseHandlerImpl {
                 .flatMap(franchise -> franchiseServicePort.saveFranchise(franchiseMapper.franchiseDTOToFranchise(franchise), messageId)
                         .doOnSuccess(savedFranchise -> log.info("Franchise created successfully with messageId: {}", messageId))
                 )
-                .flatMap(franchise -> buildSuccessResponse(
-                        HttpStatus.CREATED,
-                        messageId,
-                        TechnicalMessage.FRANCHISE_CREATED,
-                        franchise
-                ))
+                .flatMap(franchise ->  ServerResponse
+                        .status(HttpStatus.CREATED)
+                        .bodyValue(TechnicalMessage.FRANCHISE_CREATED.getMessage()))
                 .contextWrite(Context.of(X_MESSAGE_ID, messageId))
                 .doOnError(ex -> log.error(FRANCHISE_ERROR, ex))
                 .onErrorResume(BusinessException.class, ex -> buildErrorResponse(
