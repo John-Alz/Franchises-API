@@ -1,8 +1,24 @@
 package com.api.franchises.infrastructure.entrypoints;
 
+import com.api.franchises.infrastructure.entrypoints.dto.ProductDTO;
+import com.api.franchises.infrastructure.entrypoints.dto.UpdateNameRequest;
+import com.api.franchises.infrastructure.entrypoints.dto.UpdateStockRequest;
 import com.api.franchises.infrastructure.entrypoints.handler.ProductHandlerImpl;
+import com.api.franchises.infrastructure.entrypoints.util.ErrorDTO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springdoc.core.annotations.RouterOperation;
+import org.springdoc.core.annotations.RouterOperations;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -13,6 +29,224 @@ import static com.api.franchises.infrastructure.entrypoints.util.Constants.BASE_
 public class ProductRouterRest {
 
     @Bean
+    @RouterOperations({
+            @RouterOperation(
+                    path = BASE_URL + "/branches/{branchId}/products",
+                    method = RequestMethod.POST,
+                    consumes = { MediaType.APPLICATION_JSON_VALUE },
+                    produces = { MediaType.TEXT_PLAIN_VALUE },
+                    beanClass = ProductHandlerImpl.class,
+                    beanMethod = "createProduct",
+                    operation = @Operation(
+                            operationId = "createProduct",
+                            summary = "Crear producto en una sucursal",
+                            tags = {"Products"},
+                            description = "Crea un producto dentro de la sucursal especificada.",
+                            parameters = {
+                                    @Parameter(
+                                            name = "branchId",
+                                            in = ParameterIn.PATH,
+                                            required = true,
+                                            description = "ID de la sucursal",
+                                            schema = @Schema(type = "integer", format = "int64", example = "10")
+                                    ),
+                                    @Parameter(
+                                            name = "X-Message-Id",
+                                            in = ParameterIn.HEADER,
+                                            required = false,
+                                            description = "ID de correlación opcional"
+                                    )
+                            },
+                            requestBody = @RequestBody(
+                                    required = true,
+                                    content = @Content(
+                                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                            schema = @Schema(implementation = ProductDTO.class)
+                                    )
+                            ),
+                            responses = {
+                                    @ApiResponse(
+                                            responseCode = "201",
+                                            description = "Producto creado",
+                                            content = @Content(
+                                                    mediaType = MediaType.TEXT_PLAIN_VALUE,
+                                                    schema = @Schema(type = "string", example = "Product created successfully")
+                                            )
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = "400",
+                                            description = "Parámetros inválidos",
+                                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = "500",
+                                            description = "Error interno",
+                                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
+                                    )
+                            }
+                    )
+            ),
+            @RouterOperation(
+                    path = BASE_URL + "/branches/{branchId}/products/{productId}",
+                    method = RequestMethod.DELETE,
+                    produces = { MediaType.APPLICATION_JSON_VALUE },
+                    beanClass = ProductHandlerImpl.class,
+                    beanMethod = "deleteProduct",
+                    operation = @Operation(
+                            operationId = "deleteProduct",
+                            summary = "Eliminar un producto",
+                            tags = {"Products"},
+                            description = "Elimina el producto indicado de la sucursal dada.",
+                            parameters = {
+                                    @Parameter(
+                                            name = "branchId",
+                                            in = ParameterIn.PATH,
+                                            required = true,
+                                            description = "ID de la sucursal",
+                                            schema = @Schema(type = "integer", format = "int64", example = "10")
+                                    ),
+                                    @Parameter(
+                                            name = "productId",
+                                            in = ParameterIn.PATH,
+                                            required = true,
+                                            description = "ID del producto",
+                                            schema = @Schema(type = "integer", format = "int64", example = "1001")
+                                    ),
+                                    @Parameter(
+                                            name = "X-Message-Id",
+                                            in = ParameterIn.HEADER,
+                                            required = false,
+                                            description = "ID de correlación opcional"
+                                    )
+                            },
+                            responses = {
+                                    @ApiResponse(responseCode = "204", description = "Producto eliminado"),
+                                    @ApiResponse(
+                                            responseCode = "400",
+                                            description = "Parámetros inválidos",
+                                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = "500",
+                                            description = "Error interno",
+                                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
+                                    )
+                            }
+                    )
+            ),
+            @RouterOperation(
+                    path = BASE_URL + "/branches/{branchId}/products/{productId}",
+                    method = RequestMethod.PATCH,
+                    consumes = { MediaType.APPLICATION_JSON_VALUE },
+                    produces = { MediaType.APPLICATION_JSON_VALUE },
+                    beanClass = ProductHandlerImpl.class,
+                    beanMethod = "updateStockProduct",
+                    operation = @Operation(
+                            operationId = "updateStockProduct",
+                            summary = "Actualizar stock de un producto",
+                            tags = {"Products"},
+                            description = "Actualiza el stock del producto indicado en la sucursal dada.",
+                            parameters = {
+                                    @Parameter(
+                                            name = "branchId",
+                                            in = ParameterIn.PATH,
+                                            required = true,
+                                            description = "ID de la sucursal",
+                                            schema = @Schema(type = "integer", format = "int64", example = "10")
+                                    ),
+                                    @Parameter(
+                                            name = "productId",
+                                            in = ParameterIn.PATH,
+                                            required = true,
+                                            description = "ID del producto",
+                                            schema = @Schema(type = "integer", format = "int64", example = "1001")
+                                    ),
+                                    @Parameter(
+                                            name = "X-Message-Id",
+                                            in = ParameterIn.HEADER,
+                                            required = false,
+                                            description = "ID de correlación opcional"
+                                    )
+                            },
+                            requestBody = @RequestBody(
+                                    required = true,
+                                    content = @Content(
+                                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                            schema = @Schema(implementation = UpdateStockRequest.class)
+                                    )
+                            ),
+                            responses = {
+                                    @ApiResponse(responseCode = "204", description = "Stock actualizado"),
+                                    @ApiResponse(
+                                            responseCode = "400",
+                                            description = "Parámetros inválidos",
+                                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = "500",
+                                            description = "Error interno",
+                                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
+                                    )
+                            }
+                    )
+            ),
+            @RouterOperation(
+                    path = BASE_URL + "/branches/{branchId}/products/{productId}/name",
+                    method = RequestMethod.PATCH,
+                    consumes = { MediaType.APPLICATION_JSON_VALUE },
+                    produces = { MediaType.APPLICATION_JSON_VALUE },
+                    beanClass = ProductHandlerImpl.class,
+                    beanMethod = "updateNameProduct",
+                    operation = @Operation(
+                            operationId = "updateNameProduct",
+                            summary = "Actualizar nombre de un producto",
+                            tags = {"Products"},
+                            description = "Actualiza el nombre del producto indicado en la sucursal dada.",
+                            parameters = {
+                                    @Parameter(
+                                            name = "branchId",
+                                            in = ParameterIn.PATH,
+                                            required = true,
+                                            description = "ID de la sucursal",
+                                            schema = @Schema(type = "integer", format = "int64", example = "10")
+                                    ),
+                                    @Parameter(
+                                            name = "productId",
+                                            in = ParameterIn.PATH,
+                                            required = true,
+                                            description = "ID del producto",
+                                            schema = @Schema(type = "integer", format = "int64", example = "1001")
+                                    ),
+                                    @Parameter(
+                                            name = "X-Message-Id",
+                                            in = ParameterIn.HEADER,
+                                            required = false,
+                                            description = "ID de correlación opcional"
+                                    )
+                            },
+                            requestBody = @RequestBody(
+                                    required = true,
+                                    content = @Content(
+                                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                            schema = @Schema(implementation = UpdateNameRequest.class)
+                                    )
+                            ),
+                            responses = {
+                                    @ApiResponse(responseCode = "204", description = "Nombre actualizado"),
+                                    @ApiResponse(
+                                            responseCode = "400",
+                                            description = "Parámetros inválidos",
+                                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = "500",
+                                            description = "Error interno",
+                                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)))
+                                    )
+                            }
+                    )
+            )
+    })
     public RouterFunction<ServerResponse> productRouterFunction(ProductHandlerImpl handler) {
         return RouterFunctions.route()
                 .POST(BASE_URL + "/branches/{branchId}/products", handler::createProduct)
