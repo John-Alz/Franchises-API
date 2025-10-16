@@ -1,12 +1,17 @@
 package com.api.franchises.infrastructure.adapters.adapters.persistenceadapter;
 
 import com.api.franchises.domain.model.TopProductPerBranch;
+import com.api.franchises.domain.spi.ReportingPersistencePort;
+import com.api.franchises.infrastructure.adapters.adapters.persistenceadapter.dto.TopProductPerBranchRow;
+import com.api.franchises.infrastructure.adapters.adapters.persistenceadapter.mapper.ReportingDtoMapper;
+import com.api.franchises.infrastructure.adapters.adapters.persistenceadapter.repository.ReportingRepository;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.r2dbc.core.DatabaseClient;
@@ -25,75 +30,43 @@ import static org.mockito.Mockito.*;
 class ReportingPersistenceAdapterTest {
 
     @Mock
-    DatabaseClient db;
+    ReportingRepository repository;
+
     @Mock
-    DatabaseClient.GenericExecuteSpec generic;
-    @Mock
-    FetchSpec<TopProductPerBranch> fetch;
-    ReportingPersistenceAdapter adapter;
+    ReportingDtoMapper mapper;
+
+    ReportingPersistencePort adapter;
 
     @BeforeEach
-    void init() {
-        adapter = new ReportingPersistenceAdapter(db);
+    void setUp() {
+        adapter = new ReportingPersistenceAdapter(repository, mapper);
     }
 
     @Test
-    void topProductPerBranch_shouldBindAndMap_andReturnItems() {
-        long franchiseId = 10L;
+    void shouldReturnMappedDomainResults() {
+        Long franchiseId = 10L;
 
-        AtomicReference<BiFunction<Row, RowMetadata, TopProductPerBranch>> mapperRef = new AtomicReference<>();
+        TopProductPerBranchRow row1 = new TopProductPerBranchRow(1L, "Sucursal Centro", 100L, "Mouse", 300);
+        TopProductPerBranchRow row2 = new TopProductPerBranchRow(2L, "Sucursal Norte", 200L, "Teclado", 500);
 
-        when(db.sql(anyString())).thenReturn(generic);
-        when(generic.bind(eq("franchiseId"), eq(franchiseId))).thenReturn(generic);
-        when(generic.map(ArgumentMatchers.<BiFunction<Row, RowMetadata, TopProductPerBranch>>any()))
-                .thenAnswer(inv -> {
-                    mapperRef.set(inv.getArgument(0));
-                    return fetch;
-                });
+        when(repository.findTopProductPerBranchByFranchiseId(franchiseId))
+                .thenReturn(Flux.just(row1, row2));
 
-        Row row1 = mock(Row.class);
-        Row row2 = mock(Row.class);
-        RowMetadata meta = mock(RowMetadata.class);
+        TopProductPerBranch model1 = new TopProductPerBranch(1L, "Sucursal Centro", 100L, "Mouse", 300);
+        TopProductPerBranch model2 = new TopProductPerBranch(2L, "Sucursal Norte", 200L, "Teclado", 500);
 
-        when(row1.get("branch_id", Long.class)).thenReturn(1L);
-        when(row1.get("branch_name", String.class)).thenReturn("Norte");
-        when(row1.get("product_id", Long.class)).thenReturn(7L);
-        when(row1.get("product_name", String.class)).thenReturn("Salsa");
-        when(row1.get("stock", Integer.class)).thenReturn(20);
-
-        when(row2.get("branch_id", Long.class)).thenReturn(2L);
-        when(row2.get("branch_name", String.class)).thenReturn("Sur");
-        when(row2.get("product_id", Long.class)).thenReturn(5L);
-        when(row2.get("product_name", String.class)).thenReturn("Papas");
-        when(row2.get("stock", Integer.class)).thenReturn(15);
-
-        when(fetch.all()).thenAnswer(inv -> {
-            TopProductPerBranch a = mapperRef.get().apply(row1, meta);
-            TopProductPerBranch b = mapperRef.get().apply(row2, meta);
-            return Flux.just(a, b);
-        });
+        when(mapper.toModel(row1)).thenReturn(model1);
+        when(mapper.toModel(row2)).thenReturn(model2);
 
         StepVerifier.create(adapter.topProductPerBranch(franchiseId))
-                .assertNext(tp -> {
-                    assertThat(tp.branchId()).isEqualTo(1L);
-                    assertThat(tp.branchName()).isEqualTo("Norte");
-                    assertThat(tp.productId()).isEqualTo(7L);
-                    assertThat(tp.productName()).isEqualTo("Salsa");
-                    assertThat(tp.stock()).isEqualTo(20);
-                })
-                .assertNext(tp -> {
-                    assertThat(tp.branchId()).isEqualTo(2L);
-                    assertThat(tp.branchName()).isEqualTo("Sur");
-                    assertThat(tp.productId()).isEqualTo(5L);
-                    assertThat(tp.productName()).isEqualTo("Papas");
-                    assertThat(tp.stock()).isEqualTo(15);
-                })
+                .expectNext(model1, model2)
                 .verifyComplete();
 
-        verify(db).sql(anyString());
-        verify(generic).bind("franchiseId", franchiseId);
-        verify(generic).map(ArgumentMatchers.any(BiFunction.class));
-        verify(fetch).all();
-        verifyNoMoreInteractions(db, generic, fetch);
+        InOrder inOrder = inOrder(repository, mapper);
+        inOrder.verify(repository).findTopProductPerBranchByFranchiseId(franchiseId);
+        inOrder.verify(mapper).toModel(row1);
+        inOrder.verify(mapper).toModel(row2);
+        inOrder.verifyNoMoreInteractions();
     }
+
 }
