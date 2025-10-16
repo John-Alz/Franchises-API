@@ -5,20 +5,22 @@ import com.api.franchises.domain.spi.FranchisePersistencePort;
 import com.api.franchises.domain.spi.ReportingPersistencePort;
 import com.api.franchises.domain.usecase.ReportingUseCase;
 import com.api.franchises.infrastructure.adapters.adapters.persistenceadapter.ReportingPersistenceAdapter;
+import com.api.franchises.infrastructure.adapters.adapters.persistenceadapter.mapper.ReportingDtoMapper;
+import com.api.franchises.infrastructure.adapters.adapters.persistenceadapter.repository.ReportingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.r2dbc.core.DatabaseClient;
 
 @Configuration
 @RequiredArgsConstructor
 public class ReportingConfig {
 
-    private final DatabaseClient db;
+    private final ReportingRepository repository;
+    private final ReportingDtoMapper mapper;
 
     @Bean
     public ReportingPersistencePort reportingPersistencePort() {
-        return new ReportingPersistenceAdapter(db);
+        return new ReportingPersistenceAdapter(repository, mapper);
     }
 
     @Bean
