@@ -43,3 +43,13 @@ Thumbs.db
 # === Docs y otras carpetas locales opcionales ===
 docs
 scripts/local
+
+# === Terraform / Infrastructure ===
+infra/
+*.tf
+*.tfvars
+*.tfstate
+*.tfstate.backup
+
+# === Documentation ===
+README.md
