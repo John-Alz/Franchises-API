@@ -1,0 +1,55 @@
+# === VCS ===
+.git
+.gitignore
+.gitattributes
+
+# === Gradle / builds ===
+.gradle
+build
+out
+target
+bin
+
+# === Tests / reports / coverage ===
+**/reports
+**/test-results
+**/surefire-reports
+**/jacocogit
+**/coverage
+
+# === IDEs ===
+.idea
+.vscode
+*.iml
+.project
+.classpath
+.settings
+
+# === Sistema / basura ===
+.DS_Store
+Thumbs.db
+**/*.log
+**/*.tmp
+**/*.swp
+**/*.bak
+
+# === Env & secrets (no subir al contexto) ===
+.env
+.env.*
+*.env
+*.key
+*.pem
+
+# === Docs y otras carpetas locales opcionales ===
+docs
+scripts/local
+
+# === Terraform / Infrastructure ===
+infra/
+*.tf
+*.tfvars
+*.tfstate
+*.tfstate.backup
+
+# === Documentation ===
+README.md

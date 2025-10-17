@@ -35,3 +35,18 @@ out/
 
 ### VS Code ###
 .vscode/
+
+*.tfvars
+
+# === Terraform State & Cache ===
+# Ignora el directorio de trabajo de Terraform (contiene plugins, etc.)
+.terraform/
+
+# CRUCIAL: Ignora los archivos de estado. Pueden contener secretos en texto plano.
+terraform.tfstate
+terraform.tfstate.backup
+*.tfplan
+
+# === General OS & Logs ===
+.DS_Store
+*.log
