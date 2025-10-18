@@ -8,6 +8,7 @@ import com.api.franchises.infrastructure.entrypoints.dto.BranchDTO;
 import com.api.franchises.infrastructure.entrypoints.dto.UpdateNameRequest;
 import com.api.franchises.infrastructure.entrypoints.mapper.BranchMapper;
 import com.api.franchises.infrastructure.entrypoints.util.ErrorDTO;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,7 @@ public class BranchHandlerImpl {
 
     private final BranchServicePort branchServicePort;
     private final BranchMapper branchMapper;
+    private final Validator validator;
 
     public Mono<ServerResponse> createBranch(ServerRequest request) {
         final String messageId = getMessageId(request) != null
@@ -39,6 +41,11 @@ public class BranchHandlerImpl {
                 : UUID.randomUUID().toString();
         Long franchiseId = Long.valueOf(request.pathVariable("franchiseId"));
         return request.bodyToMono(BranchDTO.class)
+                .flatMap(dto -> {
+                    var violations = validator.validate(dto);
+                    if (violations.isEmpty()) return Mono.just(dto);
+                    return Mono.error(new BusinessException(TechnicalMessage.NAME_REQUIRED));
+                })
                 .flatMap(branchDTO -> branchServicePort.saveBranch(franchiseId, branchMapper.branchDTOToBranch(branchDTO), messageId)
                         .doOnSuccess(savedBranch -> log.info("Branch created successfully with messageId: {}", messageId))
                 )
@@ -75,6 +82,11 @@ public class BranchHandlerImpl {
         Long branchId = Long.valueOf(request.pathVariable("branchId"));
         Long franchiseId = Long.valueOf(request.pathVariable("franchiseId"));
         return request.bodyToMono(UpdateNameRequest.class)
+                .flatMap(dto -> {
+                    var violations = validator.validate(dto);
+                    if (violations.isEmpty()) return Mono.just(dto);
+                    return Mono.error(new BusinessException(TechnicalMessage.NAME_REQUIRED));
+                })
                 .flatMap(dto -> branchServicePort.updateNameBranch(franchiseId, branchId, dto.getNewName()))
                 .then(ServerResponse.noContent().build())
                 .contextWrite(Context.of(X_MESSAGE_ID, messageId))
