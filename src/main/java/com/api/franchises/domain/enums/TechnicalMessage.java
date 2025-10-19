@@ -22,7 +22,10 @@ public enum TechnicalMessage {
     PRODUCT_CREATED("201", "Product created successfully", ""),
     PRODUCT_DELETED("200", "Product deleted successfully", ""),
     PRODUCT_NOT_IN_BRANCH_OR_NOT_FOUND("400", "The product does not belong to this branch or does not exist.", ""),
-    NEGATIVE_STOCK("400", "The product's stock cannot be less than zero.", "");
+    NEGATIVE_STOCK("400", "The product's stock cannot be less than zero.", ""),
+    NAME_REQUIRED("400", "The name is required.", "name"),
+    STOCK_REQUIRED("400", "The stock is required.", "stock");
+
 
     private final String code;
     private final String message;
