@@ -330,3 +330,51 @@ resource "aws_vpc_endpoint" "logs" {
     Name = "${var.project_name}-logs-endpoint"
   }
 }
+
+// Tunel seguro
+
+resource "aws_iam_role" "demo_ssm_role" {
+  name = "${var.project_name}-demo-ssm-role"
+  assume_role_policy = jsonencode({
+    Version   = "2012-10-17",
+    Statement = [{
+      Action    = "sts:AssumeRole",
+      Effect    = "Allow",
+      Principal = { Service = "ec2.amazonaws.com" }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "demo_ssm_policy" {
+  role       = aws_iam_role.demo_ssm_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_iam_instance_profile" "demo_ssm_profile" {
+  name = "${var.project_name}-demo-ssm-profile"
+  role = aws_iam_role.demo_ssm_role.name
+}
+
+data "aws_ami" "amazon_linux_2" {
+  most_recent = true
+  owners      = ["amazon"]
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+}
+
+resource "aws_instance" "demo_ssm_bastion" {
+  ami           = data.aws_ami.amazon_linux_2.id
+  instance_type = "t3.micro"
+
+  subnet_id = module.networking.public_subnet_ids[0]
+
+  vpc_security_group_ids = [aws_security_group.ecs_service_sg.id]
+
+  iam_instance_profile = aws_iam_instance_profile.demo_ssm_profile.name
+
+  tags = {
+    Name = "${var.project_name}-demo-bastion"
+  }
+}
