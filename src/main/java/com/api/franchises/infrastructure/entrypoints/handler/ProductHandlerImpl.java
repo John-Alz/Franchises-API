@@ -11,6 +11,7 @@ import com.api.franchises.infrastructure.entrypoints.dto.UpdateStockRequest;
 import com.api.franchises.infrastructure.entrypoints.mapper.ProductMapper;
 import com.api.franchises.infrastructure.entrypoints.util.Constants;
 import com.api.franchises.infrastructure.entrypoints.util.ErrorDTO;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,8 @@ public class ProductHandlerImpl {
 
     private final ProductServicePort productServicePort;
     private final ProductMapper productMapper;
+    private final Validator validator;
+
 
     public Mono<ServerResponse> createProduct(ServerRequest request) {
         final String messageId = getMessageId(request) != null
@@ -42,6 +45,11 @@ public class ProductHandlerImpl {
                 : UUID.randomUUID().toString();
         Long branchId = Long.valueOf(request.pathVariable(ConstantsEntryPoints.BRANCH_ID));
         return request.bodyToMono(ProductDTO.class)
+                .flatMap(dto -> {
+                    var violations = validator.validate(dto);
+                    if (violations.isEmpty()) return Mono.just(dto);
+                    return Mono.error(new BusinessException(TechnicalMessage.INVALID_PARAMETERS));
+                })
                 .flatMap(product -> productServicePort.saveProduct(branchId, productMapper.productDTOToProduct(product), messageId)
                         .doOnSuccess(savedUser -> log.info("Product created successfully with messageId: {}", messageId))
                 )
@@ -109,6 +117,11 @@ public class ProductHandlerImpl {
         Long branchId = Long.valueOf(request.pathVariable(ConstantsEntryPoints.BRANCH_ID));
         Long productId = Long.valueOf(request.pathVariable(ConstantsEntryPoints.PRODUCT_ID));
         return request.bodyToMono(UpdateStockRequest.class)
+                .flatMap(dto -> {
+                    var violations = validator.validate(dto);
+                    if (violations.isEmpty()) return Mono.just(dto);
+                    return Mono.error(new BusinessException(TechnicalMessage.STOCK_REQUIRED));
+                })
                 .flatMap(dto -> productServicePort.updateStockProduct(branchId, productId, dto.getStock()))
                 .then(ServerResponse.noContent().build())
                 .contextWrite(Context.of(X_MESSAGE_ID, messageId))
@@ -142,6 +155,11 @@ public class ProductHandlerImpl {
         Long branchId = Long.valueOf(request.pathVariable(ConstantsEntryPoints.BRANCH_ID));
         Long productId = Long.valueOf(request.pathVariable(ConstantsEntryPoints.PRODUCT_ID));
         return request.bodyToMono(UpdateNameRequest.class)
+                .flatMap(dto -> {
+                    var violations = validator.validate(dto);
+                    if (violations.isEmpty()) return Mono.just(dto);
+                    return Mono.error(new BusinessException(TechnicalMessage.NAME_REQUIRED));
+                })
                 .flatMap(dto -> productServicePort.updateNameProduct(branchId, productId, dto.getNewName()))
                 .then(ServerResponse.noContent().build())
                 .contextWrite(Context.of(X_MESSAGE_ID, messageId))

@@ -2,6 +2,7 @@ package com.api.franchises.infrastructure.entrypoints.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,8 +15,8 @@ public class ProductDTO {
     @Schema(example = "Pepperoni pizza", description = "Product name")
     private String name;
 
-    @NotBlank
+    @NotNull
     @Schema(example = "10", description = "Product stock")
-    private int stock;
+    private Integer stock;
 }
 
